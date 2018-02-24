@@ -35,6 +35,8 @@ getVersion "kernel-headers" "KERNEL_HEADERS_VERSION"
 getVersion "gcc" "GCC_VERSION"
 getVersion "glibc" "GLIBC_VERSION"
 getVersion "docker-ce" "DOCKER_VERSION"
+getVersion "dkms" "DKMS_VERSION"
+getVersion "libstdc++.i686" "LIBSTDC_VERSION"
 
 echo "hostname: $HOSTNAME"
 echo "kernel: $KERNEL_VERSION"

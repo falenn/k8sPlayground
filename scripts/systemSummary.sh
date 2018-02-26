@@ -40,7 +40,7 @@ getVersion "libstdc++.i686" "LIBSTDC_VERSION"
 
 echo "hostname: $HOSTNAME"
 echo "kernel: $KERNEL_VERSION"
-echo "gpu: $GPU_VERSION"
+echo "gpu: $GPU_INFO"
 
 for i in "${!magic_variable[@]}"
 do

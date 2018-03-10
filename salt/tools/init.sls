@@ -1,0 +1,3 @@
+mcelog:
+  pkg.installed: []
+  

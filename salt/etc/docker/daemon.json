@@ -1,0 +1,5 @@
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "data-root": "/home/docker",
+  "storage-driver": "devicemapper"
+}

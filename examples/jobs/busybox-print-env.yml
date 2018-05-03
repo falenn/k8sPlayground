@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: busybox-print-env
+spec:
+  template:
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ["/bin/sh", "-c", "env"]
+        env:
+        - name: STUDENT_NAME
+          value: "student"
+        - name: SCHOOL
+          value: "Somewhere Hi"
+        - name: KUBERNETES
+          value: "is awesome"
+      restartPolicy: Never
+  backoffLimit: 4

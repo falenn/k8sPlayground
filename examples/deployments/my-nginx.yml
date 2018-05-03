@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       run: my-nginx
-  replicas: 5
+  replicas: 2
   template:
     metadata:
       labels:
@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: my-nginx
-        image: nginx:1.7.9
+        image: nginx:1.8
         ports:
         - containerPort: 80

@@ -1,0 +1,21 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: alpine-sleeper
+spec:
+  selector:
+    matchLabels:
+      run: alpine-sleeper
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: alpine-sleeper
+        running: afterLabels      
+    spec:
+      containers:
+      - name: alpine-sleeper
+        image: alpine:latest
+        command: ["/bin/ash"]
+        args: ["-c","sleep 30"]
+      restartPolicy: Always

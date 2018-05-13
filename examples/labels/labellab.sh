@@ -10,6 +10,9 @@ kubectl label nodes falenn3.mylabserver.com color=green --overwrite=true
 kubectl get nodes --show-labels
 
 #2. If you have pods already running in your cluster in the default namespace, label them with the key/value pair running=beforeLabels.
+# remove alpine-deployment if it exists so we can add it later...
+kubectl delete deployments alpine-sleeper
+
 echo "current pods"
 kubectl get pods -o wide
 echo "label running pods with running=beforeLabels"
@@ -24,12 +27,15 @@ for pod in $(kubectl get pods | awk '{ print $1 }'); do
   ((counter++))
 done
 kubectl get pods --show-labels
+
 #3. Create a new alpine deployment that sleeps for one minute and is then restarted from a yaml file that you write that labels these container with the key/value pair running=afterLabels.
+kubectl create -f alpine-deployment.yml
 
 #4. List all running pods in the default namespace that have the key/value pair running=beforeLabels.
-
+kubectl get pods --show-labels=true --namespace=default --selector=running=beforeLabels -o wide
 #5. Label all pods in the default namespace with the key/value pair tier=linuxAcademyCloud.
-
+kubectl get pods --show-labels=true --namespace=default --selector=tier=linuxAcademyCloud
 #6. List all pods in the default namespace with the key/value pair running=afterLabels and tier=linuxAcademyCloud.
-
+kubectl get pods --show-labels=true --namespace=default --selector=running=afterLabels --selector=run=alpine-sleeper
+kubectl get pods -w --show-labels=true --namespace=default --selector=run=alpine-sleeper -o wide
 

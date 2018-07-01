@@ -2,6 +2,8 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: alpine-sleeper
+  labels: 
+    lab: linuxacademy
 spec:
   selector:
     matchLabels:
@@ -10,8 +12,7 @@ spec:
   template:
     metadata:
       labels:
-        run: alpine-sleeper
-        running: afterLabels      
+        run: alpine-sleeper     
     spec:
       containers:
       - name: alpine-sleeper
@@ -19,3 +20,6 @@ spec:
         command: ["/bin/ash"]
         args: ["-c","sleep 60"]
       restartPolicy: Always
+      nodeSelector:
+        net: gigabit
+

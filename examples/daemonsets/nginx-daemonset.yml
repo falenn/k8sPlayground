@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-ds
+  labels:
+    lab: linuxacademy
+    k8s-app: nginx
+spec:
+  selector:
+    matchLabels:
+      name: nginx-ds
+  template:
+    metadata:
+      labels:
+        name: nginx-ds
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: nginx-ds
+        image: nginx:1.8
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+        ports:
+        - containerPort: 80

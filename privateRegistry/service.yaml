@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: docker
+  namespace: registry
+spec:
+  selector:
+    app: docker-registry
+  ports:
+    - port: 5000
+      targetPort: 5000

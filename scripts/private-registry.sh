@@ -1,23 +1,14 @@
-Skip to content
-
-Search…
-All gists
-GitHub
- 
-Instantly share code, notes, and snippets.
-
-0 2 @ajbouhajbouh/create-registry.sh
-Created 10 months ago
- 
-<script src="https://gist.github.com/ajbouh/ea07868d3c6aa2e678560701de8c44ce.js"></script>
-  
- Code  Revisions 1  Forks 2
-Create a private Docker registry on a fresh Kubernetes Cluster
- create-registry.sh
+#!/bin/bash
+# @ajbouhajbouh/create-registry.sh
+# <script src="https://gist.github.com/ajbouh/ea07868d3c6aa2e678560701de8c44ce.js"></script>
+# Create a private Docker registry on a fresh Kubernetes Cluster
+# create-registry.sh
 set -ex
 
-REGISTRY_INGRESS_IP=10.73.177.23
-REGISTRY_INGRESS_REGISTRY_INGRESS_HOSTNAME=registry.$REGISTRY_INGRESS_IP.xip.io
+kubectl create namespace dev-support
+
+REGISTRY_INGRESS_IP=192.168.2.9
+REGISTRY_INGRESS_REGISTRY_INGRESS_HOSTNAME=registry.$REGISTRY_INGRESS_IP.default.cluster.local
 
 # if [ ! -e $REGISTRY_INGRESS_HOSTNAME.key ]; then
 #   echo '{"CN":"'$REGISTRY_INGRESS_HOSTNAME'","hosts":[""],"key":{"algo":"rsa","size":2048}}' | cfssl gencert -config=ca-config.json -ca=ca.pem -ca-key=ca-key.pem -hostname="$REGISTRY_INGRESS_HOSTNAME" - | cfssljson -bare $REGISTRY_INGRESS_HOSTNAME
@@ -54,11 +45,27 @@ SEDEXPRS=(
   "-e" "s/{{dockercfg}}/$DOCKERCFG/g"
   "-e" "s/{{domain}}/$REGISTRY_INGRESS_HOSTNAME/g"
 )
-cat <<EOF | sed ${SEDEXPRS[*]} | kubectl replace -f -
+cat <<EOF | sed ${SEDEXPRS[*]} | kubectl replace --namespace=dev-support -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: spectrum-scale-fileset
+    volume.beta.kubernetes.io/storage-provisioner: ubiquity/flex
+  name: pvc-registry-image-store
+  namespace: dev-support
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1000Gi
+---
 apiVersion: v1
 kind: Secret
 metadata:
   name: registry-tls-data
+  namespace: dev-support
 type: Opaque
 data:
   tls.crt: {{tlscert}}
@@ -68,6 +75,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: registry-auth-data
+  namespace: dev-support
 type: Opaque
 data:
   htpasswd: {{htpasswd}}
@@ -76,6 +84,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: registry
+  namespace: dev-support
 spec:
   replicas: 1
   template:
@@ -104,18 +113,16 @@ spec:
         - name: REGISTRY_AUTH_HTPASSWD_PATH
           value: /auth/htpasswd
         volumeMounts:
-        - name: image-store
+        - name: pvc-registry-image-store
           mountPath: /var/lib/registry
         - name: auth-dir
           mountPath: /auth
+          readOnly: true
         ports:
         - containerPort: 5000
           name: registry
           protocol: TCP
       volumes:
-      - name: image-store
-        hostPath:
-          path: /srv/registry
       - name: auth-dir
         secret:
           secretName: registry-auth-data
@@ -124,6 +131,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: registry-access
+  namespace: dev-support
 data:
   .dockercfg: {{dockercfg}}
 type: kubernetes.io/dockercfg
@@ -132,6 +140,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: registry-ingress
+  namespace: dev-support
 spec:
   tls:
   - hosts:
@@ -145,21 +154,9 @@ spec:
           serviceName: registry
           servicePort: 5000
         path: /
+  nodeSelector: 
+    kubernetes.io/hostname: client3
 EOF
 
 kubectl patch cm nginx-load-balancer-conf -p '{"data":{"body-size":"1024m"}}'
-kubectl expose deployment registry
- to join this conversation on GitHub. Already have an account? Sign in to comment
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-API
-Training
-Shop
-Blog
-About
-Press h to open a hovercard with more details.
+kubectl expose deployment registry --namespace=dev-support

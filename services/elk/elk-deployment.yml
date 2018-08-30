@@ -1,51 +1,38 @@
-apiVersion: 1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: elk
-  tags:
-    app: elk
+  name: elk-deployment
+  namespace: elasticsearch
 spec:
+  selector: 
+    matchLabels: 
+      app: elk
   replicas: 1
-  containers:
-    - name: elk
-      image: sebp/elk:6.3.2
-      ports:
-        - containerPort: 5601
-        - nodePort: 
-        
-        EXPOSE 5601 9200 9300 5044
-VOLUME /var/lib/elasticsearch
- -e LOGSTASH_START=0 -e KIBANA_START=0
- 
- # https://elk-docker.readthedocs.io/
- 
- apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  name: my-nginx
-spec:
-  selector:
-    matchLabels:
-      run: my-nginx
-  replicas: 3 
   template:
-    metadata:
+    metadata: 
       labels:
-        run: my-nginx
+        app: elk
     spec:
       containers:
-      - name: my-nginx
-        image: nginx:1.8
+      - name: elk
+        image: sebp/elk:6.3.2
         ports:
-        - containerPort: 80
-        
-   volumeMounts:
-      - name: registry-data-pvc
-        mountPath: /var/lib/registry
-  volumes:
-  - name: registry-data-pvc
-    persistentVolumeClaim:
-      claimName: docker-registry-pvc
+        - containerPort: 5601
+        - containerPort: 9200
+        - containerPort: 9300
+        - containerPort: 5044
+        volumeMounts:
+        - name: elk-elasticsearch-data-pvc
+          mountPath: /var/lib/elasticsearch
+        env:
+        - name: LOGSTASH_START
+          value: "0"
+        - name: KIBANA_START
+          value: "1"
+      volumes:
+      - name: elk-elasticsearch-data-pvc
+        persistentVolumeClaim:
+          claimName: elk-elasticsearch-data-pvc
  
  
     

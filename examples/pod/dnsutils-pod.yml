@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  labels:
+    app: dnsutils
+spec:
+  containers:
+  - image: tutum/dnsutils
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always

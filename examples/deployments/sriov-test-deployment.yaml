@@ -1,21 +1,29 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1beta2
+kind: Deployment
 metadata:
-  name: mofed-test-pod
+  name: mofed-test-deployment
 spec:
-  restartPolicy: OnFailure
-  containers:
-  - image: mellanox/mlnx_ofed_linux-4.4-1.0.0.0-centos7.4
-    name: mofed-test-ctr
-    securityContext:
-      capabilities:
-        add: [ "IPC_LOCK" ]
-    resources:
-      limits:
-        rdma/vhca: 1
-    command:
-    - sh
-    - -c
-    - |
-      ls -l /dev/infiniband /sys/class/net
-      sleep 1000000
+  selector:
+    matchLabels:
+      run: mofed-test
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: mofed-test
+    spec:
+      containers:
+      - name: mofed-test
+        image: mellanox/mlnx_ofed_linux-4.4-1.0.0.0-centos7.4
+        securityContext:
+          capabilities:
+            add: [ "IPC_LOCK" ]
+        resources:
+          limits:
+            rdma/vhca: 1
+        command:
+        - sh
+        - -c
+        - |
+          ls -l /dev/infiniband /sys/class/net
+          sleep 1000000

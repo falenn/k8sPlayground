@@ -32,12 +32,12 @@ kubectl:
 #    - group: root
 #    - mode: 660
 
-#/etc/sysctl.d/k8s.conf:
-#  file.managed:
-#    - source: /srv/salt/etc/sysctl.d/k8s.conf
-#    - user: root
-#    - group: root
-#    - mode: 660
+/etc/sysctl.d/k8s.conf:
+    file.managed:
+    - source: /srv/salt/etc/sysctl.d/k8s.conf
+    - user: root
+    - group: root
+    - mode: 660
 
 #kubelet:
 #  pkg.installed: []

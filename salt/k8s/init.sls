@@ -7,13 +7,23 @@
     - source: salt://etc/yum.repos.d/k8s.repo
     - user: root
     - group: root
-    - mode: 644 
- 
+    - mode: 644
+
 kubeadm:
   pkg.installed: []
+  - prereq:
+      - /etc/yum.repos.d/k8s.repo:
+
+kubelet:
+  pkg.installed: []
+  - prereq:
+      - /etc/yum.repos.d/k8s.repo:
 
 kubectl:
   pkg.installed: []
+  - prereq:
+      - /etc/yum.repos.d/k8s.repo:
+
 
 /etc/kubernetes/kubelet.yaml:
   file.managed:

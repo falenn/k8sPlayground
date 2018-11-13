@@ -1,45 +1,38 @@
-[root@client0 ~]# k describe daemonsets kube-sriov-cni-ds-installer --namespace=kube-system
-Name:           kube-sriov-cni-ds-installer
-Selector:       name=sriov-cni-ds
-Node-Selector:  <none>
-Labels:         name=sriov-cni-ds
-Annotations:    kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"extensions/v1beta1","kind":"DaemonSet","metadata":{"annotations":{},"name":"kube-sriov-cni-ds-installer","namespace":"kube-system"},"spe...
-Desired Number of Nodes Scheduled: 3
-Current Number of Nodes Scheduled: 3
-Number of Nodes Scheduled with Up-to-date Pods: 3
-Number of Nodes Scheduled with Available Pods: 3
-Number of Nodes Misscheduled: 0
-Pods Status:  3 Running / 0 Waiting / 0 Succeeded / 0 Failed
-Pod Template:
-  Labels:  name=sriov-cni-ds
-  Init Containers:
-   install-cni:
-    Image:      rdma/k8s-sriov-cni-installer
-    Port:       <none>
-    Host Port:  <none>
-    Command:
-      /installer/installer.sh
-    Environment:  <none>
-    Mounts:
-      /host-cni-bin from host-cni-bin (rw)
-      /host-cni-etc from host-cni-etc (rw)
-  Containers:
-   install-cni-sleep:
-    Image:      rdma/k8s-sriov-cni-installer
-    Port:       <none>
-    Host Port:  <none>
-    Command:
-      /installer/installer_sleep.sh
-    Environment:  <none>
-    Mounts:       <none>
-  Volumes:
-   host-cni-etc:
-    Type:          HostPath (bare host directory volume)
-    Path:          /etc/cni/net.d/
-    HostPathType:  
-   host-cni-bin:
-    Type:          HostPath (bare host directory volume)
-    Path:          /opt/cni/bin
-    HostPathType:  
-Events:            <none>
-
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: kube-sriov-cni-ds-installer
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        name: sriov-cni-ds
+    spec:
+      hostNetwork: true
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      initContainers:
+      - name: install-cni
+        image: rdma/k8s-sriov-cni-installer
+        imagePullPolicy: IfNotPresent
+        command: [ "/installer/installer.sh" ]
+        volumeMounts:
+        - name: host-cni-etc
+          mountPath: /host-cni-etc
+        - name: host-cni-bin
+          mountPath: /host-cni-bin
+      containers:
+      - name: install-cni-sleep
+        image: rdma/k8s-sriov-cni-installer
+        imagePullPolicy: IfNotPresent
+        command: [ "/installer/installer_sleep.sh" ]
+      volumes:
+      - name: host-cni-etc
+        hostPath:
+              path: /etc/cni/net.d/
+      - name: host-cni-bin
+        hostPath:
+              path: /opt/cni/bin

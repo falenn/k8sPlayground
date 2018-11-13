@@ -12,11 +12,16 @@
 kubeadm:
   pkg.installed: []
 
-kubelet:
-  pkg.installed: []
-
 kubectl:
   pkg.installed: []
+
+kubelet:
+  pkg.installed: []
+  service.running:
+    - name: kubelet
+    - enable: True
+    - watch:
+      - file: /etc/kubernetes/daemon.json
 
 #/etc/kubernetes/kubelet.yaml:
 #  file.managed:

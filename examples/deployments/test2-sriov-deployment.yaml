@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sriov-deployment
+spec:
+  selector:
+    matchLabels:
+      app: sriov
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sriov
+    spec:
+      containers:
+      - name: testsriov
+        image: mellanox/mlnx_ofed_linux-4.4-1.0.0.0-centos7.4:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        securityContext:
+          capabilities:
+            add: [ "IPC_LOCK" ]
+        resources:
+          limits:
+            rdma/vhca: 1
+        command:
+        - sh
+        - -c
+        - |
+          ls -l /dev/infiniband /sys/class/net
+          sleep 1000000

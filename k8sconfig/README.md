@@ -8,6 +8,10 @@ enabled=1
 gpgcheck=1
 gpgkey=https://yum.dockerproject.org/gpg
 
+# install go
+wget https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
+add export PATH=$PATH:/usr/local/go/bin to .bash_profile
 
 #make sure we can reach gcr.io
 kubeadm config images pull

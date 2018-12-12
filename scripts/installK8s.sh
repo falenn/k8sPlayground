@@ -20,18 +20,20 @@ exclude=kube*
 EOF
 sudo setenforce 0
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo systemctl stop kubelet
 sudo systemctl enable kubelet && sudo systemctl start kubelet
 
+sudo kubeadm reset
 
 # set network CIDR for CNI
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 
 
 # install flannel
 curl -LJO https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
-kubectl apply -f kube-flannel.yml
+sudo kubectl apply -f kube-flannel.yml
 
 #allow scheduling on the master
-kubectl taint nodes --all node-role.kubernetes.io/master-
+sudo kubectl taint nodes --all node-role.kubernetes.io/master-
 
 # setup kubectl for non-root user
 mkdir -p $HOME/.kube

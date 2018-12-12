@@ -1,5 +1,6 @@
 {
-  "exec-opts": ["native.cgroupdriver=systemd"],
+  "exec-opts": ["native.cgroupdriver=cgroupfs"],
   "data-root": "/home/docker",
-  "storage-driver": "devicemapper"
+  "storage-driver": "devicemapper",
+  "insecure-registries" : ["192,168,2,6:30000","10.10.2.6:30000","10.10.3.6:30000"]
 }

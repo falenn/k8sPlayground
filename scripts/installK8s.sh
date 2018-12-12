@@ -39,5 +39,5 @@ sudo kubectl taint nodes --all node-role.kubernetes.io/master-
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
+export KUBECONFIG=$HOME/.kube/config
 

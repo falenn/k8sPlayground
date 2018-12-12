@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: iperf-ds
+  labels:
+    purpose: cluster-testing
+    k8s-app: iperf
+spec:
+  selector:
+    matchLabels:
+      name: iperf-ds
+  template:
+    metadata:
+      labels:
+        name: iperf-ds
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: iperf-ds
+        image: mlabbe/iperf:2.0.10-r1
+        command:
+          - sleep
+          - "3600"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5001
+          protocol: TCP
+        - containerPort: 5001
+          protocol: UDP
+      restartPolicy: Always

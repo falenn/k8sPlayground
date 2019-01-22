@@ -14,6 +14,9 @@ spec:
       labels:
         name: iperf-ds
     spec:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
@@ -24,9 +27,14 @@ spec:
           - sleep
           - "3600"
         imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:
+            add: ["CAP_NET_RAW", "NET_RAW"]
         ports:
         - containerPort: 5001
           protocol: TCP
         - containerPort: 5001
           protocol: UDP
+        securityContext:
+          privileged: true
       restartPolicy: Always

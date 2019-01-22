@@ -4,7 +4,7 @@ docker-ce:
    - name: docker
    - enable: True
    - prereq:
-     - pkg: upgrade_libseccomp
+     - pkg: libseccomp
      - pkg: yum-utils
      - pkg: device-mapper-persistent-data
      - pkg: lvm2
@@ -26,7 +26,7 @@ docker-repo:
     - name: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     - creates: /etc/yum.repos.d/docker-ce.repo
 
-upgrade_libseccomp:
+libseccomp:
   pkg.installed:
     - version: libseccomp-2.3.1-3.el7.x86_64
 

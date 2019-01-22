@@ -18,12 +18,19 @@ repo_gpgcheck=1
 gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
 exclude=kube*
 EOF
+
+#disable swap
+sudo swapoff -a
+
+#disable selinux
 sudo setenforce 0
+
+# install kube binaries
 sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable kubelet && sudo systemctl start kubelet
 
 
-# set network CIDR for CNI
+# initialize master and set network CIDR for CNI
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
 # install flannel
@@ -38,4 +45,3 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 export KUBECONFIG=$HOME/.kube/config
-

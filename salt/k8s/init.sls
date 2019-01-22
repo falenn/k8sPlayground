@@ -20,8 +20,7 @@ kubelet:
   service.running:
     - name: kubelet
     - enable: True
-    - watch:
-      - file: /etc/kubernetes/daemon.json
+    
 
 #/etc/kubernetes/kubelet.yaml:
 #  file.managed:

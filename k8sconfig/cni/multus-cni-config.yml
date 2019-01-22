@@ -23,7 +23,7 @@ data:
         {
           "type": "sriov",
           "name": "sriov.1",
-          "if0" "ib0"   
+          "if0" "ib0"
         }
       ],
       "kubeconfig": "/etc/cni/net.d/multus.d/multus.kubeconfig"

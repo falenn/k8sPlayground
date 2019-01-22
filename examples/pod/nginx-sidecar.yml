@@ -1,0 +1,58 @@
+#
+# https://vorozhko.net/kubernetes-sidecar-pattern-nginx-ssl-proxy-for-nodejs
+# 
+# Sidecar pattern fror adding https
+# 
+# Setup certs, create
+# and create secrets
+# git clone https://github.com/ployst/docker-nginx-ssl-proxy.git
+# cd docker-nginx-ssl-proxy
+# ./setup-certs.sh /path/to/certs/folder
+#
+# cd /path/to/certs/folder
+#kubectl create secret generic ssl-key-secret --from-file=proxykey=proxykey --from-file=proxycert=proxycert --from-file=dhparam=dhparam
+#
+#
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: nodejs-hello
+  labels:
+    app: nodejs
+    proxy: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-hello
+  template:
+    metadata:
+      labels:
+        app: nodejs-hello
+    spec:
+      containers:
+      - name: nodejs-hello
+        image: beh01der/web-service-dockerized-example
+        ports:
+        - containerPort: 3000
+      - name: nginx
+        image: ployst/nginx-ssl-proxy
+        env:
+        - name: SERVER_NAME
+          value: "appname.example.com"
+        - name: ENABLE_SSL
+          value: "true"
+        - name: TARGET_SERVICE
+          value: "localhost:3000"
+        volumeMounts:
+          - name: ssl-keys
+            readOnly: true
+            mountPath: "/etc/secrets"          
+        ports:
+        - containerPort: 80
+          containerPort: 443
+      volumes:
+      - name: ssl-keys
+        secret:
+          secretName: ssl-key-secret
+#

@@ -1,4 +1,4 @@
-FROM centos:7.2.1511
+FROM alpine
 
 # use env variables to define working directories and versions.
 # example
@@ -19,10 +19,7 @@ ENV OPENSSL_PACKED=OpenSSL_1_1_0h.tar.gz \
 
 WORKDIR ${BUILD_DIR}
 
-RUN yum install -y perl.x86_64 gcc.x86_64 make \
-                   autoconf automake libtool
-
-#RUN apk add --no-cache --update linux-headers perl build-base make autoconf automake libtool && rm -rf /var/cache/apk/*
+RUN apk add --no-cache --update linux-headers perl build-base make autoconf automake libtool && rm -rf /var/cache/apk/*
 
 COPY ./${OPENSSL_PACKED} ${BUILD_DIR}
 COPY ./${NGINX_PACKED} ${BUILD_DIR}

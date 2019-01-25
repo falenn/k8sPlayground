@@ -1,0 +1,1 @@
+cmd_/root/QAT/quickassist/qat/drivers/crypto/qat/qat_c3xxxvf/qat_c3xxxvf.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /root/QAT/quickassist/qat/drivers/crypto/qat/qat_c3xxxvf/qat_c3xxxvf.ko /root/QAT/quickassist/qat/drivers/crypto/qat/qat_c3xxxvf/qat_c3xxxvf.o /root/QAT/quickassist/qat/drivers/crypto/qat/qat_c3xxxvf/qat_c3xxxvf.mod.o

@@ -1,0 +1,9 @@
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_common/intel_qat.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_dh895xcc/qat_dh895xcc.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_c3xxx/qat_c3xxx.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_c62x/qat_c62x.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_dh895xccvf/qat_dh895xccvf.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_c3xxxvf/qat_c3xxxvf.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_c62xvf/qat_c62xvf.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_d15xx/qat_d15xx.ko
+kernel//root/QAT/quickassist/qat/drivers/crypto/qat/qat_d15xxvf/qat_d15xxvf.ko

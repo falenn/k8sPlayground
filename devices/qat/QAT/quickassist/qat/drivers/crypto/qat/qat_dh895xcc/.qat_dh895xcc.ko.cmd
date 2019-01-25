@@ -1,0 +1,1 @@
+cmd_/root/QAT/quickassist/qat/drivers/crypto/qat/qat_dh895xcc/qat_dh895xcc.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /root/QAT/quickassist/qat/drivers/crypto/qat/qat_dh895xcc/qat_dh895xcc.ko /root/QAT/quickassist/qat/drivers/crypto/qat/qat_dh895xcc/qat_dh895xcc.o /root/QAT/quickassist/qat/drivers/crypto/qat/qat_dh895xcc/qat_dh895xcc.mod.o

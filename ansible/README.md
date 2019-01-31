@@ -1,13 +1,47 @@
-!!Listing Hosts
-hosts by default listed in /etc/ansible/hosts
+# Managing Hosts and Groups
+hosts and groups by default listed in /etc/ansible/hosts
+Hosts should relate to their names as listed in /etc/hosts
 
-!! Running ansible commands
-!!! Ping
+## SSH key generataion
+All hosts need to be accessible by the ansible user (or whatever user is going to be used to contact the remote hosts.)  To do so, we can generate SSH keys on the control node and copy them to the target hosts if needed:
+```
+ssh-keygen -t rsa -b 2048
+ssh ansible@[hostname] mkdir -p ~/.ssh
+cat .ssh/id_rsa.pub|ssh ansible@[hostname] 'cat >> .ssh/authorized_keys'
+```
+the last line is the same as ssh-copy-id
+
+## Creating an Inventory
+See the current list of hosts:
+```ansible --list-hosts all
+```
+This lists any hosts in /etc/ansible/hosts
+
+### ansible.cfg
+To create your own inventory locally, create ansible.cfg
+```
+[defaults]
+inventory = ./k8s.txt
+```
+and the k8s.txt file:
+```
+[master]
+c0 ansible_connection=local # if you were running ansible from this host, c0 being the name
+
+[nodes]
+c1 ansible_user=ansible
+c2 ansible_user=ansible
+c3 ansible_user=ansible
+```
+
+# Running ansible commands
+## Ping
 ```
 ansible all -m ping
 ```
 this pings all of the hosts
 
+## Commands and Sudo
 !!! list in home dir
 ```
 ansible all -a "ls -al /home/ansible"
@@ -28,6 +62,7 @@ ansible all -s -a "cat /var/log/messages"
 ```
 This will sudo after connecting as the ansible user.
 
+## Using Explicit Modules
 To copy a file from local to remote,
 ```
 ansible centos -m copy -a "src=test.txt dest=/tmp/test.txt"
@@ -49,11 +84,13 @@ Create a user on the centos box
 ```
 ansible centos -s -m user -a "name=test"
 ```
+
+## Command Summary
 so, a template for any commands,
 ansible [group|host] [all] [-s sudo] [-m module] [-a module parameters]
 
 
-!!!Playbook Yaml
+# Playbook Yaml
 Create the following playbook, httpd-centos.yaml
 ```
 --- # This is an example to install HTTPD on Centos
@@ -83,4 +120,6 @@ To run this,
 ```
 ansible-playbook httpd-centos.yaml  
 ```
+
+# Managing Hosts
 

@@ -121,5 +121,49 @@ To run this,
 ansible-playbook httpd-centos.yaml  
 ```
 
-# Managing Hosts
+# Gathering Facts
+```
+ansible centos -m setup 
+```
+
+To filter the results for something in particular,
+```
+ansible centos -m setup -a 'filter=*ipv4*'
+```
+
+Now, only matches on ipv4 are returned
+
+Let's now gather the facts
+```
+ansible all -m --tree facts
+```
+These facts are stored locally in the facts directory.  This lets you see all data previously returned in order to create variables, know potential state, etc.
+
+# Variables
+Variables are used in 2 ways, in our playbooks in config and passed to playbooks at runtime
+
+File vartelnet.yaml
+```
+---
+- hosts: '{{ hosts }}'
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  connection: ssh
+  gather_facts: '{{ gather }}'
+  vars:  # This is the embedded variable section that lets us parameterize the playbook
+    gather: yes
+    pkg: telnet
+  tasks:
+   - name: Install software
+     yum: 
+       name: '{{ pkg }}'
+       state: '{{ state }}'
+``` 
+
+Notice the embedded vars section.  Also, notice that 'hosts' and 'state' are not specified.  We will have to pass this var in upon execution...
+```
+ansible-playbook vartelnet.yaml --extra-vars "hosts=centos state=latest"
+```
+
 

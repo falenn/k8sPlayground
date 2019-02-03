@@ -1,0 +1,4 @@
+ansible.cfg
+k8s.txt
+.ssh
+id_rsa*

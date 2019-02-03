@@ -1,4 +1,6 @@
 ansible.cfg
 k8s.txt
 .ssh
+facts
+*/*.*.swp
 id_rsa*

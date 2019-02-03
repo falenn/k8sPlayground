@@ -1,12 +1,12 @@
 --- # This is an example to install HTTPD on Centos
-- hosts: centos   # generally a node setup in /etc/hosts
+- hosts: '{{ hosts }}'   # generally a node setup in /etc/hosts
   remote_user: ansible
   become: yes     # become root
   become_method: sudo  # in general, don't assume defaults.  Specify!
   connection: ssh
   gather_facts: yes
   vars:
-    username: myuser
+    username: apache
   tasks:
    - name: Install HTTPD on Centos7 nodes
      yum:

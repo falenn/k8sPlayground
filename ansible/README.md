@@ -166,4 +166,31 @@ Notice the embedded vars section.  Also, notice that 'hosts' and 'state' are not
 ansible-playbook vartelnet.yaml --extra-vars "hosts=centos state=latest"
 ```
 
+# Debugging
+Well, yes, this is needed.
+```
+# stow.yml
+--- # playbook showing debug
+- hosts: centos
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  connection: ssh
+  gather_facts: no
+  tasks:
+   - name: Install stow
+     yum:
+       name: stow
+       state: latest
+     register: result
+   - debug: var=result 
+```
+
+to run with the result status passed into the debug module, we then see more output now encoded in json:
+
+```
+ansible-playbook stow.yml
+```
+Not all task modules are able to register results, but if not, they will tell you.
+
 

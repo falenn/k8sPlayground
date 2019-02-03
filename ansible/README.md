@@ -193,4 +193,49 @@ ansible-playbook stow.yml
 ```
 Not all task modules are able to register results, but if not, they will tell you.
 
+# Notification and Handling
+```
+# nginx.yml
+--- # playbook showing notifications and handlers
+- hosts: '{{ hosts }}'
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+  connection: ssh
+  tasks:
+   - name: install NGinX 
+     yum:
+       name: nginx
+       state: latest
+    - name: enable nginx as a service
+       service: nginx
+       enabled: yes
+       state: restarted
+```
+When this runs,we see that this requires epel-release
+
+Running the first time installs it.
+Running it a second time, it is just restarted, including every subsequent time.
+Always restarting the service may be problematic, so we want to know if its running already.
+
+```
+...
+  tasks: 
+   - name: install NGinX
+     yum: 
+       name: nginx
+       state: latest
+     notify:
+      - enable nginx as a service
+  handlers:  # This is the section to add to receive the event that NGinX was installed.  The service
+	     # task name must match the name of the - notify: name in the firing task.
+	     # The task service will only run if the notification is received.
+   - name: enable nginx as a service
+     service: 
+       name: nginx
+       state: restarted    
+
+```
+Notice the service task only runs when the task yum fires the notify event, when it will do only upon sucess.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
 

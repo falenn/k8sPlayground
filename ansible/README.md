@@ -1,8 +1,16 @@
-# Managing Hosts and Groups
+# Table of Contents
+1. [About this Project](#about)
+2. [Ansible Tutorial](#tutorial)
+	1. [Managing Hosts and Groups](#hostsAndGroups)
+	2. [Running Ansible Commands](#runningCommands)
+	3. [Playbooks](#playbooks)
+# About this Project<a name="about"></a>
+# Ansible Tutorial<a name="tutorial"></a>
+## Managing Hosts and Groups<a name="hostsAndGroups"></a>
 hosts and groups by default listed in /etc/ansible/hosts
 Hosts should relate to their names as listed in /etc/hosts
 
-## SSH key generataion
+### SSH key generataion
 All hosts need to be accessible by the ansible user (or whatever user is going to be used to contact the remote hosts.)  To do so, we can generate SSH keys on the control node and copy them to the target hosts if needed:
 ```
 ssh-keygen -t rsa -b 2048
@@ -11,13 +19,13 @@ cat .ssh/id_rsa.pub|ssh ansible@[hostname] 'cat >> .ssh/authorized_keys'
 ```
 the last line is the same as ssh-copy-id
 
-## Creating an Inventory
+### Creating an Inventory
 See the current list of hosts:
 ```ansible --list-hosts all
 ```
 This lists any hosts in /etc/ansible/hosts
 
-### ansible.cfg
+#### ansible.cfg
 To create your own inventory locally, create ansible.cfg
 ```
 [defaults]
@@ -34,14 +42,14 @@ c2 ansible_user=ansible
 c3 ansible_user=ansible
 ```
 
-# Running ansible commands
-## Ping
+## Running ansible commands<a name="runningCommands"></a>
+### Ping
 ```
 ansible all -m ping
 ```
 this pings all of the hosts
 
-## Commands and Sudo
+### Commands and Sudo
 !!! list in home dir
 ```
 ansible all -a "ls -al /home/ansible"
@@ -62,7 +70,7 @@ ansible all -s -a "cat /var/log/messages"
 ```
 This will sudo after connecting as the ansible user.
 
-## Using Explicit Modules
+### Using Explicit Modules
 To copy a file from local to remote,
 ```
 ansible centos -m copy -a "src=test.txt dest=/tmp/test.txt"
@@ -85,12 +93,12 @@ Create a user on the centos box
 ansible centos -s -m user -a "name=test"
 ```
 
-## Command Summary
+### Command Summary
 so, a template for any commands,
 ansible [group|host] [all] [-s sudo] [-m module] [-a module parameters]
 
 
-# Playbook Yaml
+## Playbooks<a name="playbooks"></a>
 Create the following playbook, httpd-centos.yaml
 ```
 --- # This is an example to install HTTPD on Centos
@@ -121,7 +129,7 @@ To run this,
 ansible-playbook httpd-centos.yaml  
 ```
 
-# Gathering Facts
+### Gathering Facts
 ```
 ansible centos -m setup 
 ```
@@ -139,7 +147,7 @@ ansible all -m --tree facts
 ```
 These facts are stored locally in the facts directory.  This lets you see all data previously returned in order to create variables, know potential state, etc.
 
-# Variables
+### Variables
 Variables are used in 2 ways, in our playbooks in config and passed to playbooks at runtime
 
 File vartelnet.yaml
@@ -166,7 +174,7 @@ Notice the embedded vars section.  Also, notice that 'hosts' and 'state' are not
 ansible-playbook vartelnet.yaml --extra-vars "hosts=centos state=latest"
 ```
 
-# Debugging
+### Debugging
 Well, yes, this is needed.
 ```
 # stow.yml
@@ -193,7 +201,7 @@ ansible-playbook stow.yml
 ```
 Not all task modules are able to register results, but if not, they will tell you.
 
-# Notification and Handling
+### Notification and Handling
 ```
 # nginx.yml
 --- # playbook showing notifications and handlers

@@ -1,0 +1,9 @@
+--- # Thought is this playbook could run setup routines for hosts with Mellanox ConnectX-5 cards installed
+- hosts: connectx5
+  
+  
+   - tasks:
+     
+     # Install opensm
+     
+     # mst start

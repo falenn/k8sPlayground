@@ -1,0 +1,44 @@
+---
+- hosts: k8s
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  connection: ssh
+  gather_facts: yes
+  tasks:
+# curl -k -L https://github.com/intel/multus-cni/releases/download/v3.1/multus-cni_v3.1_linux_386.tar.gz \
+#      --output multus-cni_v3.1_linux_amd64.tar.gz
+# tar -xvf multus-cni_v3.1_linux_amd64.tar.gz
+   - name: Extract foo.tgz into /var/lib/foo
+     unarchive:
+       src: https://github.com/intel/multus-cni/releases/download/v3.1/multus-cni_v3.1_linux_386.tar.gz
+       dest: /tmp/multus-cni_v3.1
+     notify:
+       - Copy Multus CNI Binary
+  handlers:     
+# CNI bins placed here: /opt/cni/bin
+# multus binary here, use copy module
+   - name: Copy Multus CNI Binary 
+     copy: 
+       src: ./tmp
+       dest: /opt/cni/bin
+       backup: yes
+       owner: root
+       group: root
+       mode: 0640
+    
+# CNI configs go here:  /etc/cni/net.d/
+# multus config here, design with template module to inject variables
+- name: Copy Multus CNI Configuration with template 
+  template: 
+    src: 
+    dest: /etc/cni/net.d/
+    backup: yes
+    
+    
+
+# k8s command execution
+#
+# rdma-sriov-node-config.yml
+device-plugin.yml
+k8s-sriov-cni-installer.yml

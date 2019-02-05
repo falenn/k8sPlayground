@@ -20,7 +20,7 @@
 # multus binary here, use copy module
    - name: Copy Multus CNI Binary 
      copy: 
-       src: ./tmp
+       src: 
        dest: /opt/cni/bin
        backup: yes
        owner: root
@@ -31,7 +31,7 @@
 # multus config here, design with template module to inject variables
 - name: Copy Multus CNI Configuration with template 
   template: 
-    src: 
+    src:  ./config/10-multus.yml
     dest: /etc/cni/net.d/
     backup: yes
     

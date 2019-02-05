@@ -26,24 +26,27 @@ RUN yum install -y perl.x86_64 gcc.x86_64 make \
                    autoconf automake libtool \
                    zlib*.x86_64 pcre-*.x86_64
 
-#RUN apk add --no-cache --update linux-headers perl build-base make autoconf automake libtool && rm -rf /var/cache/apk/*
-
 COPY ./${OPENSSL_PACKED} ${BUILD_DIR}
 COPY ./${NGINX_PACKED} ${BUILD_DIR}
 COPY ./${QATE_PACKED} ${BUILD_DIR}
 COPY ./${QATZ_PACKED} ${BUILD_DIR}
 COPY ./${QAT_DRIVER} ${BUILD_DIR}/${QAT_DRIVER}
+
 # TODO change to WGETs
 RUN tar xzf ${OPENSSL_PACKED} && tar xzf ${NGINX_PACKED} && tar xzf ${QATE_PACKED} && tar xzf ${QATZ_PACKED} && rm -f *.tar.gz
 
 # Building openssl
-RUN cd ${BUILD_DIR}/${OPENSSL} && ./config --prefix=${SSL_INSTALL_DIR} && cat Makefile && make && make install && export OPENSSL_ENGINES=${SSL_INSTALL_DIR}/lib/engines-1.1 && cd ${BUILD_DIR}
+RUN cd ${BUILD_DIR}/${OPENSSL} && ./config --prefix=${SSL_INSTALL_DIR} && \
+	cat Makefile && make && make install && \ 
+	echo "export OPENSSL_ENGINES=${SSL_INSTALL_DIR}/lib/engines-1.1" >> /root/.bashrc && \ 
+	cd ${BUILD_DIR}
 
 # Building QAT_Engine
-RUN cd ${BUILD_DIR}/${QATE} && ./autogen.sh && ./configure --with-qat_dir=${BUILD_DIR}/${QAT_DRIVER} --with-openssl_dir=${BUILD_DIR}/${OPENSSL}/ --with-openssl_install_dir=${SSL_INSTALL_DIR} --enable-openssl_install_build_arch_path --enable-qat_for_openssl_110 --enable-upstream_driver --enable-usdm; make && make install && cp -f ${SSL_INSTALL_DIR}/lib/libqat.so ${SSL_INSTALL_DIR}/lib/engines-1.1/qat.so && cd ${BUILD_DIR}/${QATE}/${QATE_CONFIG} && cp c6xx_dev* /etc/ && touch /etc/ld.so.conf.d/usrlocal.conf && echo "${SSL_INSTALL_DIR}/lib/" > /etc/ld.so.conf.d/usrlocal.conf && ldconfig -v && cd ${BUILD_DIR}
+RUN cd ${BUILD_DIR}/${QATE} && ./autogen.sh && ./configure --with-qat_dir=${BUILD_DIR}/${QAT_DRIVER} --with-openssl_dir=${BUILD_DIR}/${OPENSSL}/ --with-openssl_install_dir=${SSL_INSTALL_DIR} --enable-openssl_install_build_arch_path --enable-qat_for_openssl_110 --enable-upstream_driver --enable-usdm; make && make install && cp -f ${SSL_INSTALL_DIR}/lib/libqat.so ${SSL_INSTALL_DIR}/lib/engines-1.1/qat.so && cd ${BUILD_DIR}/${QATE}/${QATE_CONFIG} && cp c6xx_dev* /etc/ && touch /etc/ld.so.conf.d/usrlocal.conf && echo "${SSL_INSTALL_DIR}/lib/" > /etc/ld.so.conf.d/usrlocal.conf && echo "${BUILD_DIR}/${QAT_DRIVER}/build/" >> /etc/ld.so.conf.d/usrlocal.conf && ldconfig -v && cd ${BUILD_DIR}
 
 # Building Qzip
 RUN cd ${BUILD_DIR}/${QATZ} && ./configure --with-ICP_ROOT=${BUILD_DIR}/${QAT_DRIVER}/ && make && make all install && cd ${BUILD_DIR} 
 
 # Building nginx_asynch w/ qat support
 RUN cd ${BUILD_DIR}/${NGINX} && ./configure --prefix=${NGINX_INSTALL_DIR} --with-http_ssl_module --add-dynamic-module=modules/nginx_qatzip_module --add-dynamic-module=modules/nginx_qat_module/ --with-cc-opt="-DNGX_SECURE_MEM -I${SSL_INSTALL_DIR}/include/ -I${BUILD_DIR}/${QAT_DRIVER}/include -Wno-error=deprecated-declarations" --with-ld-opt="-Wl,-rpath=${SSL_INSTALL_DIR}lib -L${SSL_INSTALL_DIR}lib -L${SSL_INSTALL_DIR}/include/ -lqatzip -lz" && make && make install && cd ${BUILD_DIR}
+

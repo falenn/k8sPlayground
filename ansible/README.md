@@ -4,6 +4,10 @@
 	1. [Managing Hosts and Groups](#hostsAndGroups)
 	2. [Running Ansible Commands](#runningCommands)
 	3. [Playbooks](#playbooks)
+		1. [Planning Playbooks](#planningPlaybooks)
+3. [Variable Files](#variableFiles)
+4. [Parallel Support](#parallel)
+
 # About this Project<a name="about"></a>
 # Ansible Tutorial<a name="tutorial"></a>
 ## Managing Hosts and Groups<a name="hostsAndGroups"></a>
@@ -247,3 +251,145 @@ Always restarting the service may be problematic, so we want to know if its runn
 ```
 Notice the service task only runs when the task yum fires the notify event, when it will do only upon sucess.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
 
+### Conditionals<a name="conditionals"/>
+Unlike if-then-else, Ansible uses "when."
+```
+---
+ - hosts: apacheweb
+   ...
+   gather_facts: yes
+   vars:
+     plabook_type: conditionalExample
+   tasks:
+    - name: install apache appropriate to distribution (Debian)
+      command: apt-get -y install apache2
+      when: ansible_os_family == "debian"
+    - name: install apache appropriate to distribution type (RedHat/Centos)
+      command: yum install -y httpd
+      when: ansible_os_family == "RedHat"
+```
+
+To see what the var ansible_os_family returns, you can look in the log from gather_facts as mentioned above, or run somehting like the following:
+```
+ansible apacheweb -m setup -a 'filter=ansible_os_family'
+```
+
+### Planning Playbooks<a name="planningPlaybooks"></a>
+Using a text editor, layout what you want to do first.
+```
+- webservers
+- test user 
+- sudo rights
+
+- date/time stamp for when teh playbook starts
+
+- install the apache web server
+- start the web service
+
+- verify that the web service is running
+
+- install client software
+ - telnet
+ - lynx
+ 
+- log all the packages installed on the system
+
+- date/time stamp for when the playbook ends
+```
+Now that we've laid out what we want to do, we can translate this into YAML.
+
+```
+--- 
+- hosts: webservers
+  user: test
+  sudo: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+   - name: date/time stamp for when the playbook starts
+     raw: /usr/bin/date > /home/test/playbook_start.log
+   - name: install the apache web server
+     yum: pkg=httpd state=latest
+   - name: start the web service
+     service: name=httpd state=restarted
+   - name: verify that the webservice is running
+     command: systemctl status httpd
+     register: result
+   - debug: var=result
+   - name: install client software - telnet
+     yum: pkg=telnet state=latest
+   - name: install client software - lynx
+     yum: pkg=lynx state=latest
+   - name: log all the packages installed on the system
+     raw: yum list installed > /home/test/installed.log
+   - name: date/time stamp for when the playbook ends
+     raw: /usr/bin/date > /home/test/playbook_end.log
+```
+
+Now, test the playbook without actually running the playbook
+This is called a dry-run:
+```
+ansible-playbook webserver.yml --check
+```
+This is the text file straight-on through.  Instead of raw, we can store the output and return to the ansible host:
+
+```
+- name: date/time stamp for when the playbook starts
+  command: /usr/bin/date
+  register: timstamp_start
+- debug: var=timestamp_start
+...
+- name: log all the packages installed on the system
+  command: yum list installed
+  register: installed_result
+- debug: var=installed_result
+...
+- name: date/time stamp for when the playbook ends
+  command: /usr/bin/date
+  register: timstamp_end
+- debug: var=timestamp_end
+```
+
+Now, instead of just blowing through the startup of the httpd server, we can use handlers...
+```
+- name: install the apache web server
+  yum: pkg=httpd state=latest
+  notify: Start HTTPD
+  ...
+```
+No point in starting if the install didn't work...
+```
+handlers:
+ - name: Start HTTPD
+   service: name=httpd state=restarted
+```
+# Variable Files<a name="variableFiles"/>
+
+Create a yaml file to store variables in...
+``` conf/variables.yml
+```
+
+Refer to the file in your yaml playbook
+```
+ - hosts: ....
+   vars:
+     playbook_version: 0.1
+   vars_files:
+    - conf/copyright.yml
+    - conf/variables.yml
+   tasks:
+    - ...
+```
+
+Now, you can refer to your variables...
+
+# Parallel Support<a name="parallel"/>
+By default, Ansible runs up to 5 socket connections /forks at a time to perform actions on target hosts.  If you have a lot of hosts for a given group, you may want to run tasks in parallel to speed things up.  Notice the following sections, we can tell a task to run async.  Async with 300 sec to timeout and a pull interval of 3 seconds to check for completion.
+```
+- name: Do something
+  ...
+  async: 300
+  poll: 3
+```
+# Ansible in Docker
+I'm currently using the willianyeh/ansible:alpine3 image, but ran into challenges with lacking certain utilities, such as untar.  Ugh.  Now switching to centos7 build by williamyeh to see if this image suffices.  To the point, the cimage needs to contain necessary supporting utilities.

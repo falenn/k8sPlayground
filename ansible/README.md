@@ -391,4 +391,5 @@ By default, Ansible runs up to 5 socket connections /forks at a time to perform 
   async: 300
   poll: 3
 ```
-
+# Ansible in Docker
+I'm currently using the willianyeh/ansible:alpine3 image, but ran into challenges with lacking certain utilities, such as untar.  Ugh.  Now switching to centos7 build by williamyeh to see if this image suffices.  To the point, the cimage needs to contain necessary supporting utilities.

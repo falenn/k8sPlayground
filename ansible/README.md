@@ -5,6 +5,8 @@
 	2. [Running Ansible Commands](#runningCommands)
 	3. [Playbooks](#playbooks)
 		1. [Planning Playbooks](#planningPlaybooks)
+3. [Variable Files](#variableFiles)
+
 # About this Project<a name="about"></a>
 # Ansible Tutorial<a name="tutorial"></a>
 ## Managing Hosts and Groups<a name="hostsAndGroups"></a>
@@ -301,6 +303,7 @@ Now that we've laid out what we want to do, we can translate this into YAML.
 ```
 
 Now, test the playbook without actually running the playbook
+This is called a dry-run:
 ```
 ansible-playbook webserver.yml --check
 ```
@@ -335,5 +338,33 @@ No point in starting if the install didn't work...
 handlers:
  - name: Start HTTPD
    service: name=httpd state=restarted
+```
+# Variable Files<a name="variableFiles"/>
+
+Create a yaml file to store variables in...
+``` conf/variables.yml
+```
+
+Refer to the file in your yaml playbook
+```
+ - hosts: ....
+   vars:
+     playbook_version: 0.1
+   vars_files:
+    - conf/copyright.yml
+    - conf/variables.yml
+   tasks:
+    - ...
+```
+
+Now, you can refer to your variables...
+
+# Parallel Support
+By default, Ansible runs up to 5 socket connections /forks at a time to perform actions on target hosts.  If you have a lot of hosts for a given group, you may want to run tasks in parallel to speed things up.  Notice the following sections, we can tell a task to run async.  Async with 300 sec to timeout and a pull interval of 3 seconds to check for completion.
+```
+- name: Do something
+  ...
+  async: 300
+  pull: 3
 ```
 

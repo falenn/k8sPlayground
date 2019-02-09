@@ -248,7 +248,7 @@ Always restarting the service may be problematic, so we want to know if its runn
 ```
 Notice the service task only runs when the task yum fires the notify event, when it will do only upon sucess.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
 
-### planning Playbooks<a name="planningPlaybooks"></a>
+### Planning Playbooks<a name="planningPlaybooks"></a>
 Using a text editor, layout what you want to do first.
 ```
 - webservers
@@ -304,6 +304,36 @@ Now, test the playbook without actually running the playbook
 ```
 ansible-playbook webserver.yml --check
 ```
+This is the text file straight-on through.  Instead of raw, we can store the output and return to the ansible host:
 
+```
+- name: date/time stamp for when the playbook starts
+  command: /usr/bin/date
+  register: timstamp_start
+- debug: var=timestamp_start
+...
+- name: log all the packages installed on the system
+  command: yum list installed
+  register: installed_result
+- debug: var=installed_result
+...
+- name: date/time stamp for when the playbook ends
+  command: /usr/bin/date
+  register: timstamp_end
+- debug: var=timestamp_end
+```
 
+Now, instead of just blowing through the startup of the httpd server, we can use handlers...
+```
+- name: install the apache web server
+  yum: pkg=httpd state=latest
+  notify: Start HTTPD
+  ...
+```
+No point in starting if the install didn't work...
+```
+handlers:
+ - name: Start HTTPD
+   service: name=httpd state=restarted
+```
 

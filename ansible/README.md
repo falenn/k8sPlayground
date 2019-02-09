@@ -251,6 +251,29 @@ Always restarting the service may be problematic, so we want to know if its runn
 ```
 Notice the service task only runs when the task yum fires the notify event, when it will do only upon sucess.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
 
+### Conditionals<a name="conditionals"/>
+Unlike if-then-else, Ansible uses "when."
+```
+---
+ - hosts: apacheweb
+   ...
+   gather_facts: yes
+   vars:
+     plabook_type: conditionalExample
+   tasks:
+    - name: install apache appropriate to distribution (Debian)
+      command: apt-get -y install apache2
+      when: ansible_os_family == "debian"
+    - name: install apache appropriate to distribution type (RedHat/Centos)
+      command: yum install -y httpd
+      when: ansible_os_family == "RedHat"
+```
+
+To see what the var ansible_os_family returns, you can look in the log from gather_facts as mentioned above, or run somehting like the following:
+```
+ansible apacheweb -m setup -a 'filter=ansible_os_family'
+```
+
 ### Planning Playbooks<a name="planningPlaybooks"></a>
 Using a text editor, layout what you want to do first.
 ```

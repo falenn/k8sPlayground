@@ -4,6 +4,7 @@
 	1. [Managing Hosts and Groups](#hostsAndGroups)
 	2. [Running Ansible Commands](#runningCommands)
 	3. [Playbooks](#playbooks)
+		1. [Planning Playbooks](#planningPlaybooks)
 # About this Project<a name="about"></a>
 # Ansible Tutorial<a name="tutorial"></a>
 ## Managing Hosts and Groups<a name="hostsAndGroups"></a>
@@ -246,4 +247,63 @@ Always restarting the service may be problematic, so we want to know if its runn
 
 ```
 Notice the service task only runs when the task yum fires the notify event, when it will do only upon sucess.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
+
+### planning Playbooks<a name="planningPlaybooks"></a>
+Using a text editor, layout what you want to do first.
+```
+- webservers
+- test user 
+- sudo rights
+
+- date/time stamp for when teh playbook starts
+
+- install the apache web server
+- start the web service
+
+- verify that the web service is running
+
+- install client software
+ - telnet
+ - lynx
+ 
+- log all the packages installed on the system
+
+- date/time stamp for when the playbook ends
+```
+Now that we've laid out what we want to do, we can translate this into YAML.
+
+```
+--- 
+- hosts: webservers
+  user: test
+  sudo: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+   - name: date/time stamp for when the playbook starts
+     raw: /usr/bin/date > /home/test/playbook_start.log
+   - name: install the apache web server
+     yum: pkg=httpd state=latest
+   - name: start the web service
+     service: name=httpd state=restarted
+   - name: verify that the webservice is running
+     command: systemctl status httpd
+     register: result
+   - debug: var=result
+   - name: install client software - telnet
+     yum: pkg=telnet state=latest
+   - name: install client software - lynx
+     yum: pkg=lynx state=latest
+   - name: log all the packages installed on the system
+     raw: yum list installed > /home/test/installed.log
+   - name: date/time stamp for when the playbook ends
+     raw: /usr/bin/date > /home/test/playbook_end.log
+```
+
+Now, test the playbook without actually running the playbook
+```
+ansible-playbook webserver.yml --check
+```
+
+
 

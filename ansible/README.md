@@ -6,6 +6,7 @@
 	3. [Playbooks](#playbooks)
 		1. [Planning Playbooks](#planningPlaybooks)
 3. [Variable Files](#variableFiles)
+4. [Parallel Support](#parallel)
 
 # About this Project<a name="about"></a>
 # Ansible Tutorial<a name="tutorial"></a>
@@ -359,12 +360,12 @@ Refer to the file in your yaml playbook
 
 Now, you can refer to your variables...
 
-# Parallel Support
+# Parallel Support<a name="parallel"/>
 By default, Ansible runs up to 5 socket connections /forks at a time to perform actions on target hosts.  If you have a lot of hosts for a given group, you may want to run tasks in parallel to speed things up.  Notice the following sections, we can tell a task to run async.  Async with 300 sec to timeout and a pull interval of 3 seconds to check for completion.
 ```
 - name: Do something
   ...
   async: 300
-  pull: 3
+  poll: 3
 ```
 

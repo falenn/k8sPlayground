@@ -1,0 +1,3 @@
+---
+k8s_cni_bin_path: /opt/cni/bin
+

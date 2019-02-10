@@ -116,7 +116,7 @@ Create the following playbook, httpd-centos.yaml
     username: myuser
   tasks:
    - name: Install HTTPD on Centos7 nodes
-     yum: 
+     yum:
       name: httpd
       state: latest
      notify: # upon success, run the following handler
@@ -127,15 +127,15 @@ Create the following playbook, httpd-centos.yaml
        name: httpd
        state: restarted	#or start if the first time
 ```
- 
-To run this, 
+
+To run this,
 ```
 ansible-playbook httpd-centos.yaml  
 ```
 
 ### Gathering Facts
 ```
-ansible centos -m setup 
+ansible centos -m setup
 ```
 
 To filter the results for something in particular,
@@ -168,10 +168,10 @@ File vartelnet.yaml
     pkg: telnet
   tasks:
    - name: Install software
-     yum: 
+     yum:
        name: '{{ pkg }}'
        state: '{{ state }}'
-``` 
+```
 
 Notice the embedded vars section.  Also, notice that 'hosts' and 'state' are not specified.  We will have to pass this var in upon execution...
 ```
@@ -195,7 +195,7 @@ Well, yes, this is needed.
        name: stow
        state: latest
      register: result
-   - debug: var=result 
+   - debug: var=result
 ```
 
 to run with the result status passed into the debug module, we then see more output now encoded in json:
@@ -216,7 +216,7 @@ Not all task modules are able to register results, but if not, they will tell yo
   gather_facts: yes
   connection: ssh
   tasks:
-   - name: install NGinX 
+   - name: install NGinX
      yum:
        name: nginx
        state: latest
@@ -233,9 +233,9 @@ Always restarting the service may be problematic, so we want to know if its runn
 
 ```
 ...
-  tasks: 
+  tasks:
    - name: install NGinX
-     yum: 
+     yum:
        name: nginx
        state: latest
      notify:
@@ -244,12 +244,14 @@ Always restarting the service may be problematic, so we want to know if its runn
 	     # task name must match the name of the - notify: name in the firing task.
 	     # The task service will only run if the notification is received.
    - name: enable nginx as a service
-     service: 
+     service:
        name: nginx
        state: restarted    
 
 ```
-Notice the service task only runs when the task yum fires the notify event, when it will do only upon sucess.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
+Notice the service task only runs when the task yum fires the notify event, when it will do only upon success.  Since nginx is already installed, the yum task will not fire the notify event and thus the service will not restart.
+
+
 
 ### Conditionals<a name="conditionals"/>
 Unlike if-then-else, Ansible uses "when."
@@ -273,12 +275,30 @@ To see what the var ansible_os_family returns, you can look in the log from gath
 ```
 ansible apacheweb -m setup -a 'filter=ansible_os_family'
 ```
+### Until<a name="until"/>
+Until allows a task to run so many times to try to accomplish the task with multiple attempts.
+```
+--- # Until example
+ - hosts: ...
+    ...
+	 tasks:
+	  - name: Installing Apache web webserver
+		  yum: pkg=httpd state=latest
+	  - name: Verify Service status
+		  shell: systemctl status httpd
+			register: result
+			until: result.stdout.find("active (running)") != -1
+			retries: 5
+			delay: 5
+	- debug: var=result
+```
+This runs the shell command until the condition is fulfilled or the number of retries expires.
 
 ### Planning Playbooks<a name="planningPlaybooks"></a>
 Using a text editor, layout what you want to do first.
 ```
 - webservers
-- test user 
+- test user
 - sudo rights
 
 - date/time stamp for when teh playbook starts
@@ -291,7 +311,7 @@ Using a text editor, layout what you want to do first.
 - install client software
  - telnet
  - lynx
- 
+
 - log all the packages installed on the system
 
 - date/time stamp for when the playbook ends
@@ -299,7 +319,7 @@ Using a text editor, layout what you want to do first.
 Now that we've laid out what we want to do, we can translate this into YAML.
 
 ```
---- 
+---
 - hosts: webservers
   user: test
   sudo: yes

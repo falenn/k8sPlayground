@@ -1,0 +1,24 @@
+# this is an example inventory file.
+# By not specifying localhost, localhost is contacted as the
+# ansible controller, w/o ssh, aka locally by default.
+
+[all:vars]
+ansible_user=ansible
+ansible_connection=ssh
+
+[default]
+c0
+c1
+c2
+c3
+
+[master]
+c0
+
+[nodes]
+c1
+c2
+c3
+
+[k8s]
+c1

@@ -1,0 +1,9 @@
+---
+# file: k8s-all.yml
+- hosts: k8s
+  remote_user: ansible
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+    - k8s-multus

@@ -1,5 +1,5 @@
-ansible.cfg
-k8s.txt
+#ansible.cfg
+#k8s.txt
 .ssh
 facts
 */*.*.swp

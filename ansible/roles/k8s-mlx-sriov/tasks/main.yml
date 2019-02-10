@@ -1,0 +1,6 @@
+---
+
+  Assume sr-iov files exist on localhost
+
+
+  Deploy k8s sr-iov daemonset

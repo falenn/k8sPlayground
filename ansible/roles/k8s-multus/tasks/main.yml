@@ -1,0 +1,18 @@
+---
+
+
+Copy 10-multus.conf to /etc/net.d/cni after substituting variables for
+10. network segment for the host into the config File
+
+Copy multus-bin to /opt/bin/cni from ansible controller (localhost)
+ - need to do this because of the install environment
+ - requires download from github Project
+
+- name: Download Multus CNI
+  delegate_to: localhost
+  get_url:
+    url: '{{ k8s_cni_multus_download_url }}'
+    dest: /tmp
+    mode: 0440
+  register: k8s_cni_bin_multus_archive
+  when: k8s_cni_bin_multus.stat.exists == false

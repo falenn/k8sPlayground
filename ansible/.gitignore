@@ -1,5 +1,10 @@
 #ansible.cfg
 #k8s.txt
+
+#ansible tmp downloads
+tmp
+tmp/**
+
 .ssh
 facts
 */*.*.swp

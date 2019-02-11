@@ -11,8 +11,13 @@ k8s_system_group: root
 k8s_cni_bin_dir: /opt/cni/bin
 k8s_cni_config_dir: /etc/cni/net.d
 
+# CNI Mlx interface info
+# interface used for sr-iov
+k8s_cni_sriov_mlx_ib_if: ib0
+
 # CNI Multus
-k8s_cni_multus_config: 71-multus.conf
+k8s_cni_multus_config_template: multus-flannel-mlx-sriov.conf.j2
+k8s_cni_multus_config_filename: 70-multus.conf
 k8s_cni_multus_download_url: https://github.com/intel/multus-cni/releases/download/v3.1/multus-cni_v3.1_linux_386.tar.gz
 k8s_cni_multus_archive_name: multus-cni_v3.1_linux_386
 k8s_cni_multus_binary_name: multus-cni

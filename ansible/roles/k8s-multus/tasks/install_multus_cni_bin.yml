@@ -53,8 +53,8 @@
      remote_src: yes
      src: "{{ remote_tmp_dir }}/{{ k8s_cni_multus_archive_name }}/{{ k8s_cni_multus_binary_name }}"
      dest: "{{ k8s_cni_bin_dir }}"
-     owner: {{ k8s_system_user }}
-     group: {{ k8s_system_group }}
+     owner: "{{ k8s_system_user }}"
+     group: "{{ k8s_system_group }}"
      mode: 0774
    #when: k8s_cni_bin_multus.stat.exists == false
    register: k8s_cni_bin_multus_copy

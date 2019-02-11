@@ -3,7 +3,7 @@
  # Using the group_vars for k8s, create networks for sr-iov ib0 interfaces and deploy them
  - name: Check stat of multus config file
    stat:
-     path: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config }}"
+     path: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config_filename }}"
    register: k8s_cni_multus_config
  - debug: var=k8s_cni_multus_config
 
@@ -13,8 +13,8 @@
 
 
  - name: Install Multus CNI config for SR-IOV and flannel
-   template: "{{ k8s_cni_multus_config_template }}"
-     src: "{{ 70-multus-flannel-mlx-sriov.conf.j2 }}"
+   template:
+     src: "{{ k8s_cni_multus_config_template }}"
      dest: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config_filename }}"
      owner: "{{ k8s_system_user }}"
      group: "{{ k8s_system_group }}"

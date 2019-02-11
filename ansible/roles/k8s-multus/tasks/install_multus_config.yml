@@ -1,0 +1,10 @@
+# Install multus config
+---
+ # Using the group_vars for k8s, create networks for sr-iov ib0 interfaces and deploy them
+ - name: Check stat of multus config file
+   stat:
+     path: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config }}"
+   register: k8s_cni_multus_config
+ - debug: var=k8s_cni_multus_config 
+
+ - debug: var=c1_dhcp_range 

@@ -1,6 +1,8 @@
 # roles/k8s-multus/tasks/main.yml
-# - name: Installing multus bin
-#   import_tasks: install_multus_cni_bin.yml
+ - name: Installing multus bin
+   import_tasks: install_multus_cni_bin.yml
 
  - name: Installing multus config
    import_tasks: install_multus_config.yml
+
+

@@ -15,7 +15,9 @@
  - name: Install Multus CNI config for SR-IOV and flannel
    template:
      src: 70-multus.conf.j2
-     dest: {{ k8s_cni_config_dir }}
-     owner: {{ k8s_system_user }}
-     group: {{ k8s_system_group }}
+     dest: "{{ k8s_cni_config_dir }}/70-multus.conf"
+     owner: "{{ k8s_system_user }}"
+     group: "{{ k8s_system_group }}"
      mode: 0750
+   register: k8s_cni_multus_config_template
+ - debug: var=k8s_cni_multus_config_template

@@ -20,8 +20,8 @@
             [
               {
                 "subnet": "{{ k8s_cni_multus_sriov_cidr }}",
-                "rangeStart": "{{ "{{ lookup('csvfile','{{ inventory_hostname }} file=../files/multus-sriov-dhcp.csv delimiter=, col=4  default=NOMATCH') }}" }}",
-                "rangeEnd": "{{ lookup('csvfile','{{ inventory_hostname }} file=../files/multus-sriov-dhcp.csv delimiter=, col=5  default=NOMATCH') }}",
+                "rangeStart": "{{ lookup('csvfile','{{ inventory_hostname }} file=../files/multus-sriov-dhcp.csv delimiter=, col=3  default=NOMATCH') }}",
+                "rangeEnd": "{{ lookup('csvfile','{{ inventory_hostname }} file=../files/multus-sriov-dhcp.csv delimiter=, col=4  default=NOMATCH') }}",
                 "gateway": "{{ k8s_cni_multus_sriov_default_gateway }}"
               }
             ]

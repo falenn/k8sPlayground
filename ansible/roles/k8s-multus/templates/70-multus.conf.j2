@@ -19,16 +19,16 @@
           "ranges": [
             [
               {
-                "subnet": "10.245.0.0/16",
-                "rangeStart": "10.245.0.2",
-                "rangeEnd": "10.245.0.254",
-                "gateway": "10.245.0.1"
+                "subnet": "{{ k8s_cni_multus_sriov_cidr }}",
+                "rangeStart": "{{ "{{ lookup('csvfile','{{ inventory_hostname }} file=../files/multus-sriov-dhcp.csv delimiter=, col=4  default=NOMATCH') }}" }}",
+                "rangeEnd": "{{ lookup('csvfile','{{ inventory_hostname }} file=../files/multus-sriov-dhcp.csv delimiter=, col=5  default=NOMATCH') }}",
+                "gateway": "{{ k8s_cni_multus_sriov_default_gateway }}"
               }
             ]
           ],
           "routes": [
             { "dst": "0.0.0.0/0" },
-            { "dst": "192.168.0.0/24", "gw": "10.245.0.1" }
+            { "dst": "192.168.0.0/24", "gw": "{{ k8s_cni_multus_sriov_default_gateway }}" }
           ]
         }
     }

@@ -16,7 +16,7 @@ spec:
         effect: NoSchedule
       initContainers:
       - name: install-cni
-        image: rdma/k8s-sriov-cni-installer
+        image: "{{ k8s_cni_sriov_mlx_rdma_installer_image }}"
         imagePullPolicy: IfNotPresent
         command: [ "/installer/installer.sh" ]
         volumeMounts:
@@ -26,7 +26,7 @@ spec:
           mountPath: /host-cni-bin
       containers:
       - name: install-cni-sleep
-        image: rdma/k8s-sriov-cni-installer
+        image: "{{ k8s_cni_sriov_mlx_rdma_installer_image }}"
         imagePullPolicy: IfNotPresent
         command: [ "/installer/installer_sleep.sh" ]
       volumes:

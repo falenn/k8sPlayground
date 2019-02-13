@@ -5,7 +5,8 @@
   # with the api-server info and key material present, I think.
 
   - name: install multus ClusterRoleBinding
-    delegate_to: 127.0.0.1
-    command: "kubectl apply -f ../files/multus-cluster-role.yml"
-    register: cmd_k8s_multus_cluster_role
-  - debug: var=cmd_k8s_multus_cluster_role
+    k8s_raw:
+      state: present
+      definition: "{{ lookup('file', 'multus-cluster-role.yml') | multus-cluster-role.yml }}"
+    register: k8s_raw_present_multus_cluster_role_binding
+   - debug: var=k8s_raw_present_multus_cluster_role_binding

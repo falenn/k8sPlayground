@@ -1,6 +1,4 @@
 ---
-
-  Assume sr-iov files exist on localhost
-
-
-  Deploy k8s sr-iov daemonset
+# k8s-mlx-sriov/tasks/main.yml
+ - name: install Mellanox sriov Daemonset
+   import_tasks: install_mlx_sriov_daemonset.yml

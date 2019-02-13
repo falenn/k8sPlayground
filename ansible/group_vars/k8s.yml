@@ -8,6 +8,8 @@ k8s_cni_bin_dir: /opt/cni/bin
 k8s_cni_config_dir: /etc/cni/net.d
 
 # CNI Mlx interface info
+k8s_cni_sriov_mlx_rdma_installer_image: rdma/k8s-sriov-cni-installer
+
 # interface used for sr-iov
 k8s_cni_sriov_mlx_ib_if: ib0
 

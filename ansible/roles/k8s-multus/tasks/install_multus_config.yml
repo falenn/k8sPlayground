@@ -7,14 +7,14 @@
    register: k8s_cni_multus_config
  - debug: var=k8s_cni_multus_config
 
- - debug: var=c1_dhcp_range
+ # Display the extracted inventory_hostname var - the name of the host
+ # this instance is running on
  - debug: var=inventory_hostname
 
-
-
+# Will always run and overwrite any existing config
  - name: Install Multus CNI config for SR-IOV and flannel
    template: "{{ k8s_cni_multus_config_template }}"
-     src: "{{ 70-multus-flannel-mlx-sriov.conf.j2 }}"
+     src: "{{ multus-flannel-mlx-sriov.conf.j2 }}"
      dest: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config_filename }}"
      owner: "{{ k8s_system_user }}"
      group: "{{ k8s_system_group }}"

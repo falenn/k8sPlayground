@@ -1,0 +1,11 @@
+# install_multus_cluster_role
+---
+  # this will not work as if Ansible is running in docker, it will not have
+  # the k8s kubelet binary on the path.  Need to use the k8s plugin
+  # with the api-server info and key material present, I think.
+
+  - name: install multus ClusterRoleBinding
+    delegate_to: 127.0.0.1
+    command: "kubectl apply -f ../files/multus-cluster-role.yml"
+    register: cmd_k8s_multus_cluster_role
+  - debug: var=cmd_k8s_multus_cluster_role

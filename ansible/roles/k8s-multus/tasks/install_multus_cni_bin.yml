@@ -52,7 +52,7 @@
    copy:
      remote_src: yes
      src: "{{ remote_tmp_dir }}/{{ k8s_cni_multus_archive_name }}/{{ k8s_cni_multus_binary_name }}"
-     dest: "{{ k8s_cni_bin_dir }}"
+     dest: "{{ k8s_cni_bin_dir }}/{{ k8s_cni_multus_binary_name_deployed }}"
      owner: {{ k8s_system_user }}
      group: {{ k8s_system_group }}
      mode: 0774

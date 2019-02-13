@@ -1,0 +1,10 @@
+# install Mellanox SRIOV Daemonset
+---
+ - name: Hydrate Mellanox SR-IOV HCA Daemonset Controller
+   delegate_to: 127.0.0.1
+   template: "{{ k8s_cni_multus_config_template }}"
+     src: "{{ multus-flannel-mlx-sriov.conf.j2 }}"
+     dest: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config_filename }}"
+
+  - name: Install Mellanox SR-IOV
+   command: "kubectl create -f ../files"

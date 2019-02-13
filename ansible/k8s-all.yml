@@ -6,4 +6,5 @@
   become_method: sudo
   connection: ssh
   roles:
+    - k8s-mlx-sriov
     - k8s-multus

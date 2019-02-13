@@ -1,8 +1,21 @@
+---
 # roles/k8s-multus/tasks/main.yml
+
+# Should we purge any interface information stored here?
+# /var/lib/cni/networks/...  < flannel.1> <sriov.1>, etc.?
+# This is where DHCP concepts per node are stored.  If a file exists
+# in these directories, then Multus has, via the CNI plugin,
+# allocated and assigned an interface
+# at some point.
+
+# Install the multus CNI binary
  - name: Installing multus bin
    import_tasks: install_multus_cni_bin.yml
 
+# Install the multus cni configuration on the host
  - name: Installing multus config
    import_tasks: install_multus_config.yml
 
-
+# Install cluster role bindings for multus
+ - name: Install Multus ClusterRoleBinding
+   import_tasks: install_multus_cluster_role.yml

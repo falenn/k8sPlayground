@@ -21,4 +21,8 @@ c2
 c3
 
 [k8s]
+c0
 c1
+c2
+c3
+hpnvme1

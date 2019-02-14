@@ -13,13 +13,8 @@
 
 # Will always run and overwrite any existing config
  - name: Install Multus CNI config for SR-IOV and flannel
-<<<<<<< HEAD
-   template: "{{ k8s_cni_multus_config_template }}"
-     src: "{{ multus-flannel-mlx-sriov.conf.j2 }}"
-=======
    template:
      src: "{{ k8s_cni_multus_config_template }}"
->>>>>>> 5fd337ac1a96381be9a70f6ccbae6b3075599f26
      dest: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config_filename }}"
      owner: "{{ k8s_system_user }}"
      group: "{{ k8s_system_group }}"

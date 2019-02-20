@@ -1,0 +1,8 @@
+# main.yml - docker install
+---
+#
+# swapoff -a
+
+# install docker
+
+# start docker with CIDR stuff 

@@ -5,6 +5,7 @@
 [all:vars]
 ansible_user=ansible
 ansible_connection=ssh
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 [default]
 c0
@@ -13,16 +14,12 @@ c2
 c3
 
 [master]
-c0
+c0 ansible_ssh_host=c0
 
-[nodes]
-c1
-c2
-c3
-
-[k8s]
-c0
+[node]
 c1
 c2
 c3
 hpnvme1
+
+

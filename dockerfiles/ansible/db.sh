@@ -3,15 +3,15 @@
 # Build and automate cleanup - good to use on a dev box where this is the
 # only project you are workingo on.
 
-REPO_AND_IMAGE='org.mg/ansible:1.0'
+REPO_AND_IMAGE='meadowgate/ansible-centos7:1.0'
 CONTAINER_NAME='ansible'
 
 
 #stop any running containers
-docker ps | grep $CONTAINER_NAME | awk '{print $1}' | xargs docker stop
+sudo docker ps | grep $CONTAINER_NAME | awk '{print $1}' | xargs docker stop
 
 # remove any existing stopped containers
-docker ps -a | grep $CONTAINER_NAME | awk '{print $1}' | xargs docker rm
+sudo docker ps -a | grep $CONTAINER_NAME | awk '{print $1}' | xargs docker rm
 
 # remove built image for rebuild
 # ßdocker rmi $(docker images | grep -v $REPO_AND_IMAGE | awk {'print $3'})
@@ -21,7 +21,7 @@ docker ps -a | grep $CONTAINER_NAME | awk '{print $1}' | xargs docker rm
 
 # build the image, removing intermediate layers, deleting cache
 # docker build --rm --no-cache -t "$REPO_AND_IMAGE" .
-docker build \
+sudo docker build \
     --rm \
     -t "$REPO_AND_IMAGE" .
 
@@ -33,7 +33,7 @@ if [ $? -eq 0 ]; then
   # Linux 64cd1417ea3a 4.4.27-boot2docker #1 SMP Tue Oct 25 19:51:49 UTC 2016 x86_64 Linux
 
   # run in inteactive for debugging / development
-  docker run \
+  sudo docker run \
         --name $CONTAINER_NAME \
         -l $CONTAINER_NAME \
 	--net=host \
@@ -42,7 +42,7 @@ if [ $? -eq 0 ]; then
         $REPO_AND_IMAGE
 
   # attach to the new container
-  docker attach -it ansible
+  sudo docker attach -it ansible
 
   # follow stdout
   #docker logs -f $CONTAINER_NAME

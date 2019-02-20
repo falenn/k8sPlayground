@@ -1,3 +1,41 @@
 # site.yml
 ---
- - import_playbook: k8s-all.yml
+- name: Bootstrap Tasks
+  hosts:
+   - master
+   - node
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+   - common
+ 
+- name: Install k8s master
+  hosts: master
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+   - docker
+   - kubeadm
+   - k8s_master
+   
+
+- name: Install K8s Nodes
+  hosts: node
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+   - docker
+   - kubeadm
+   - k8s_node
+
+
+- import_playbook: k8s-all.yml

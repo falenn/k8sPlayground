@@ -9,4 +9,4 @@
       state: present
       definition: "{{ lookup('file', 'multus-cluster-role.yml') | multus-cluster-role.yml }}"
     register: k8s_raw_present_multus_cluster_role_binding
-   - debug: var=k8s_raw_present_multus_cluster_role_binding
+  - debug: var=k8s_raw_present_multus_cluster_role_binding

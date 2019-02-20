@@ -1,5 +1,0 @@
-# Common vars
----
-# General
-tmp_dir: ./tmp
-remote_tmp_dir: /tmp

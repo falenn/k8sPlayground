@@ -10,16 +10,16 @@
      gpgcheck: yes
      gpgkey: https://download.docker.com/linux/centos/gpg
 
-  - name: Install base packages
-    yum:
-      name: "{{ packages }}"
-      state: latest
-    vars:
-      packages:
-       - docker-ce
-       - docker-ce-selinux.noarch
-    register: docker_yum_install
-    
+ - name: Install base packages
+   yum:
+     name: "{{ packages }}"
+     state: latest
+   vars:
+    packages:
+      - docker-ce
+      - docker-ce-selinux.noarch
+   register: docker_yum_install
+
 
 # turn swapoff before trying to start docker
 - name: turn swap off

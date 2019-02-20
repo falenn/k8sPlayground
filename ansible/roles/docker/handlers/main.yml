@@ -1,0 +1,6 @@
+# docker/handlers/main.yml
+---
+ - name: start_docker_handler
+   service:
+     name: docker
+     state: restarted	#or start if the first time

@@ -1,0 +1,10 @@
+docker_insecure_registries: "192.168.2.6:30000"
+docker_data_root: "/home/docker"
+docker_storage_driver: "devicemapper"
+docker_exec_opts: "native.cgroupdriver=cgroupfs"
+docker_daemon_json_path: "/etc/docker"
+docker_user: root
+docker_group: root
+
+docker_logging_driver_fluentd: "fluentd"
+docker_logging_opts_fluentd: "{ 'fluentd-address': 'fluentdhost:24224'}"

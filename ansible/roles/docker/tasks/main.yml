@@ -1,8 +1,47 @@
 # main.yml - docker install
 ---
-#
+ - name: Add Docker yum_repository
+   yum_repository:
+     name: Docker CE Stable - $basearch
+     description: Docker stable YUM Repo
+     file: docker-ce-stable
+     baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+     enabled: yes
+     gpgcheck: yes
+     gpgkey: https://download.docker.com/linux/centos/gpg
+
+ - name: Install Docker
+   yum: "{{ item }}" state=installed
+   with_items:
+    - docker-ce
+    - docker-ce-selinux.noarch
+   tags:
+     - packages
+   register: docker_yum_install
+
+# turn swapoff before trying to start docker
+- name: turn swap off
+  cmd: "/usr/sbin/swapoff"
+  args:
+   - argv:
+      - "-a"
 # swapoff -a
+# Will always run and overwrite any existing config
+- name: Hydrate /etc/docker/daemon.json
+  template:
+    src: "daemon.json.j2"
+    dest: "{{ docker_daemon_json_path }}/daemon.json"
+    owner: "{{ docker_user }}"
+    group: "{{ docker_group }}"
+    mode: 0640
+  register: docker_daemon_json
+  notify: start_docker_handler
+- debug: var=docker_daemon_json
+
+
+
+
 
 # install docker
 
-# start docker with CIDR stuff 
+# start docker with CIDR stuff

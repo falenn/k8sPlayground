@@ -1,0 +1,15 @@
+# main
+---
+  
+ - name: Install base packages
+   yum: "{{ item }}" state=installed
+   with_items:
+    - python-pip
+    - python3-pip
+   tags:
+     - packages
+
+ - name: Upgrade pip
+   pip: name=pip state=latest
+   tags:
+    - packages

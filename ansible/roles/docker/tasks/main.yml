@@ -23,10 +23,7 @@
 
 # turn swapoff before trying to start docker
 - name: turn swap off
-  cmd: "/usr/sbin/swapoff"
-  args:
-   - argv:
-      - "-a"
+  command: "/usr/sbin/swapoff -a"
 
 # Will always run and overwrite any existing config
 - name: Hydrate /etc/docker/daemon.json

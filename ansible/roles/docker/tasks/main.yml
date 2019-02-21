@@ -2,7 +2,7 @@
 ---
  - name: Add Docker yum_repository
    yum_repository:
-     name: Docker CE Stable - $basearch
+     name: docker-ce-stable-$basearch
      description: Docker stable YUM Repo
      file: docker-ce-stable
      baseurl: https://download.docker.com/linux/centos/7/$basearch/stable

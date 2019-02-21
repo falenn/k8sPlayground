@@ -22,4 +22,18 @@ c2
 c3
 hpnvme1
 
+# we enumerate the group of hosts in the inventory so that
+# variables are shared via group_vars
+[k8s-cni-multus-sriov]
+c0
+c1
+c2
+c3
+hpnvme1
 
+[docker]
+c0
+c1
+c2
+c3
+hpnvme1

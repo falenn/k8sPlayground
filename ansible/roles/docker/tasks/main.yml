@@ -2,7 +2,7 @@
 ---
  - name: Add Docker yum_repository
    yum_repository:
-     name: docker-ce-stable-$basearch
+     name: docker-ce stable $basearch
      description: Docker stable YUM Repo
      file: docker-ce-stable
      baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
@@ -10,29 +10,41 @@
      gpgcheck: yes
      gpgkey: https://download.docker.com/linux/centos/gpg
 
- # Install Docker
- - name: Install Docker
+ - name: Install base packages
    yum:
      name: "{{ packages }}"
      state: latest
    vars:
     packages:
-      - docker-ce-18.06*
+      - docker-ce
+      - docker-ce-selinux.noarch
    register: docker_yum_install
 
 
- # turn swapoff before trying to start docker
- - name: Ensure Swap is Off
-   command: /usr/sbin/swapoff -a
- 
- # Will always run and overwrite any existing config
- - name: Hydrate /etc/docker/daemon.json
-   template:
-     src: "daemon.json.j2"
-     dest: "{{ docker_daemon_json_path }}/daemon.json"
-     owner: "{{ docker_user }}"
-     group: "{{ docker_group }}"
-     mode: 0640
-   register: docker_daemon_json
-   notify: start_docker_handler
- - debug: var=docker_daemon_json
+# turn swapoff before trying to start docker
+- name: turn swap off
+  cmd: "/usr/sbin/swapoff"
+  args:
+   - argv:
+      - "-a"
+
+# Will always run and overwrite any existing config
+- name: Hydrate /etc/docker/daemon.json
+  template:
+    src: "daemon.json.j2"
+    dest: "{{ docker_daemon_json_path }}/daemon.json"
+    owner: "{{ docker_user }}"
+    group: "{{ docker_group }}"
+    mode: 0640
+  register: docker_daemon_json
+  when:
+  notify: start_docker_handler
+- debug: var=docker_daemon_json
+
+
+
+
+
+# install docker
+
+# start docker with CIDR stuff

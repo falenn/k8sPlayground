@@ -1,0 +1,3 @@
+# kubeadm/tasks/main.yml
+# This assumes k8s repo is already installed via k8s roles
+---

@@ -1,0 +1,6 @@
+# docker/handlers/main.yml
+---
+ - name: start_kubelet_handler
+   service:
+     name: kubelet
+     state: restarted	#or start if the first time

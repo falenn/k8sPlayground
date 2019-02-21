@@ -21,8 +21,8 @@
   connection: ssh
   roles:
    - docker
-   - kubeadm
-   - k8s_master
+#   - kubeadm
+#   - k8s_master
    
 
 - name: Install K8s Nodes
@@ -34,8 +34,8 @@
   connection: ssh
   roles:
    - docker
-   - kubeadm
-   - k8s_node
+ #  - kubeadm
+ #  - k8s_node
 
 
-- import_playbook: k8s-all.yml
+# - import_playbook: k8s-all.yml

@@ -15,9 +15,8 @@
      name: "{{ packages }}"
      state: latest
    vars:
-    packages:
-      - docker-ce
-      - docker-ce-selinux.noarch
+     packages:
+      - "{{ docker_version }}"  
    register: docker_yum_install
 
 

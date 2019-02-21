@@ -2,7 +2,7 @@
 ---
  - name: Populate service facts
    service_facts:
- - debug: var=ansible_facts.services['kubelet'].state
+ - debug: var=ansible_facts.services['kubelet']
 
  - name: start_kubelet_handler
    service:

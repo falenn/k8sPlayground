@@ -1,0 +1,35 @@
+# k8s install
+---
+- name: Bootstrap Tasks
+  hosts: docker
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+   - common
+   - docker
+
+- name: Install k8s master
+  hosts: master
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+    - k8s
+    - kubeadm
+    - k8s-master
+
+- name: Install K8s Nodes
+  hosts: node
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+   - k8s
+   - k8s-node

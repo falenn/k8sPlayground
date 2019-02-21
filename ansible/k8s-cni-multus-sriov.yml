@@ -1,12 +1,11 @@
 ---
 # file: k8s-all.yml
-- hosts: 
-   - master
-   - nodes
+- hosts:
+   - k8s-cni-multus-sriov
   remote_user: ansible
   become: yes
   become_method: sudo
   connection: ssh
   roles:
-    #- k8s-mlx-sriov
+    - k8s-mlx-sriov
     - k8s-multus

@@ -21,22 +21,21 @@
    register: docker_yum_install
 
 
-# turn swapoff before trying to start docker
-- name: turn swap off
-  command: "/usr/sbin/swapoff -a"
+ # turn swapoff before trying to start docker
+ - name: turn swap off
+   command: "/usr/sbin/swapoff -a"
 
-# Will always run and overwrite any existing config
-- name: Hydrate /etc/docker/daemon.json
-  template:
-    src: "daemon.json.j2"
-    dest: "{{ docker_daemon_json_path }}/daemon.json"
-    owner: "{{ docker_user }}"
-    group: "{{ docker_group }}"
-    mode: 0640
-  register: docker_daemon_json
-  when:
-  notify: start_docker_handler
-- debug: var=docker_daemon_json
+ # Will always run and overwrite any existing config
+ - name: Hydrate /etc/docker/daemon.json
+   template:
+     src: "daemon.json.j2"
+     dest: "{{ docker_daemon_json_path }}/daemon.json"
+     owner: "{{ docker_user }}"
+     group: "{{ docker_group }}"
+     mode: 0640
+   register: docker_daemon_json
+   notify: start_docker_handler
+ - debug: var=docker_daemon_json
 
 
 

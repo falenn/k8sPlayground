@@ -7,5 +7,9 @@ docker_daemon_json_path: "/etc/docker"
 docker_user: root
 docker_group: root
 
-docker_logging_driver_fluentd: "fluentd"
-docker_logging_opts_fluentd: "{ 'fluentd-address': 'fluentdhost:24224'}"
+docker_log_driver: "json-file"
+docker_log_opts: '{"max-size": "10m","max-file": "3","labels": "k8s-lab-cluster"}'
+
+# examples for fluentd - run fluent-bit locally and have fluent-bit log off-host to the Elastic.io target
+# docker_log_driver_fluentd: "fluentd"
+# docker_log_opts_fluentd: "{ 'fluentd-address': '0.0.0.0:24224'}"

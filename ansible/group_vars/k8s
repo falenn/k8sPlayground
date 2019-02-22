@@ -10,13 +10,13 @@ k8s_kubelet_cgroup_driver: cgroupfs
 k8s_kubelet_network_plugin: cni
 
 # Contains all the configurations for the kubelet - there's a lot
-kbs_kubelet_config: /var/lib/kubelet/config.yaml
+# kbs_kubelet_config: /var/lib/kubelet/config.yaml
 
 # Contains extra args:  KUBELET_EXTRA_ARGS=  - generally empty
-k8s_kubelet_env_file: /etc/sysconfig/kubelet
+# k8s_kubelet_env_file: /etc/sysconfig/kubelet
 
 # contains flags set on kubelet KUBELET_KUBEADM_ARGS=--cgroup-driver=cgroupfs  --network-plugin=cni
-k8s_kubelet_env_file_kubeadm_flags: /var/lib/kubelet/kubeadm-flags.env
+# k8s_kubelet_env_file_kubeadm_flags: /var/lib/kubelet/kubeadm-flags.env
 
 # contains info for connecting to the api server
-k8s_kubelet_bootstrap_config: /etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf
+# k8s_kubelet_bootstrap_config: /etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf

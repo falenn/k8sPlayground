@@ -1,7 +1,8 @@
 # K8s General
 k8s_system_user: root
 k8s_system_group: root
-k8s_version: 1.12*
+k8s_version: 1.13*
+k8s_cni_version: 0.6.*
 k8s_reset_before_init: no
 k8s_master_port: 6443
 k8s_kubelet_service_cidr: 10.244.0.0/16

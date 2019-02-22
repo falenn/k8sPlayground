@@ -13,13 +13,13 @@
 - name: Install k8s
   yum:
     name: "{{ packages }}"
-    state: latest
+    state: installed
   vars:
     packages:
      - "kubelet-{{ k8s_version }}"
      - "kubeadm-{{ k8s_version }}"
      - "kubectl-{{ k8s_version }}"
-     - "kubernetes-cni-{{ k8s_version }}"
+     - "kubernetes-cni-{{ k8s_cni_version }}"
   register: k8s_yum_install
   notify: start_kubelet_handler
 - debug: var=k8s_yum_install

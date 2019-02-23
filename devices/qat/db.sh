@@ -40,11 +40,12 @@ if [ $? -eq 0 ]; then
         --cap-add=NET_ADMIN \
         --device=/dev/net/tun \
         -it \
-        --entrypoint="/bin/bash" \
+        --ulimit memlock=-1:-1 \
+        --privileged=true \
+        -p 9090:80 -p 4430:443 -p 12345:12345 \
         $REPO_AND_IMAGE
   #$REPO_AND_IMAGE
         #for debugging
-
   # follow stdout
   #docker logs -f $CONTAINER_NAME
 else

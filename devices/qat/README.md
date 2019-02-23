@@ -4,23 +4,24 @@
 
 See https://github.com/intel/async_mode_nginx
 
+!! Goal
+
+To provide an nginx sidecar that proxies all tcp/udp traffic with TLS termination.
 
 !! Todo
-
-1. start with Centos 7.2 64x base image ++, Linux 3.10.0-327..
-2. enable SR-IOV on hosts
-3. add hpnvme2 to the kubernetes clsuter
-4. build the following in the Centos7.2 base image
-     https://github.com/intel/asynch_mode_nginx
-5. confirm that https://github.com/intel/intel-device-plugins-for-kubernetes/blob/master/cmd/qat_plugin/README.md is working
+1. Allow the docker conatiner to not run as root.
+2. Figure out how a handleful of containers can be proxied by one nginx container. Likely using a kubernetes pod volume with a few unix sockets.
+3. Fix certificate issuses related to self signed certs, so that connections are encrypted.
 
 
 Documentation
 https://01.org/sites/default/files/downloads/intelr-quickassist-technology/337020-001qatwcontaineranddocker.pdf
 
-Steps to build docker container:
-1. start from centos7.2
-2. install QAT driver 4.3.0
-3. install openssl 1.1.0h
-3. QAT_Engine v0.5.39
-4. QATzip v0.2.6
+How To:
+1. Setup the host to run the intel qat card.
+
+2. Use dpdk to create ibg_uio for interfacing with c6xxvf virtual functions.
+
+3. Run ./db.sh to start the docker conatiner that exposes a nginx proxy that forwards traffic on port 12345 to a local unix socket. Currently, there is a test http server listening in the same container on unix:/var/run/nginxproy.sock.
+
+4. Use wget https://host:12345 to recieve http responses from the proxied http server. If the certificate is valid, then the nginx proxy will preform TLS encryption on the incoming/outgoing traffic and forward unencrypted traffic to the unix socket.

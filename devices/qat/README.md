@@ -9,10 +9,11 @@ See https://github.com/intel/async_mode_nginx
 To provide an nginx sidecar that proxies all tcp/udp traffic with TLS termination.
 
 !! Todo
-1. Allow the docker conatiner to not run as root.
+1. Allow the docker conatiner to not run as root. The intel qat k8s plugin can be used to present qat devices to the docker container.
 2. Figure out how a handleful of containers can be proxied by one nginx container. Likely using a kubernetes pod volume with a few unix sockets.
 3. Fix certificate issuses related to self signed certs, so that connections are encrypted.
-
+4. Tuning nginx parameters.
+5. Tuning intel device files in /etc/
 
 Documentation
 https://01.org/sites/default/files/downloads/intelr-quickassist-technology/337020-001qatwcontaineranddocker.pdf

@@ -2,11 +2,10 @@
 mkdir -p /usr/local/nginx/ssl/certs/ 
 cd /usr/local/nginx/ssl/certs/
 
-/build/openssl-OpenSSL_1_1_0h/apps/openssl req -nodes -newkey rsa:2048 -keyout server.key -out server.csr -subj "/C=DC/ST=DC/L=DC/O=DC/OU=DC/CN=Dc"
-/build/openssl-OpenSSL_1_1_0h/apps/openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
-
-cd /build/
+/usr/local/ssl/bin/openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes -keyout server.key -out server.crt -extensions san -config <(echo "[req]"; echo distinguished_name=req; echo "[san]"; echo subjectAltName=DNS:example.com,DNS:example.net,IP.1:127.0.0.1,IP.2:192.168.2.20,IP.3:172.17.0.2) -subj /CN=example.com
 
 /usr/local/nginx/sbin/nginx &
-
+#iptables -t nat -A PREROUTING -p tcp --dport 1:65535 -j REDIRECT --to-ports 443
+#iptables -t nat -A PREROUTING -p udp --dport 1:65535 -j REDIRECT --to-ports 443
+cd /usr/local/nginx/
 /bin/bash

@@ -3,7 +3,6 @@ MASTER="c0"
 WORKER="hpnvme1"
 
 swapoff -a
-systemctl restart kubectl
 
 cd /root
 

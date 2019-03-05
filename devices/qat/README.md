@@ -14,6 +14,11 @@ To provide an nginx sidecar that proxies all tcp/udp traffic with TLS terminatio
 3. Fix certificate issuses related to self signed certs, so that connections are encrypted.
 4. Tuning nginx parameters.
 5. Tuning intel device files in /etc/
+6. Clean up Dockerfile
+7. Add qat driver build to docker file
+8. create a docker file based on wget and git
+9. Test pod iptables for forcing all traffic on a few ports
+10. Try building with a different (smaller size) base image
 
 Documentation
 https://01.org/sites/default/files/downloads/intelr-quickassist-technology/337020-001qatwcontaineranddocker.pdf
@@ -25,4 +30,7 @@ How To:
 
 3. Run ./db.sh to start the docker conatiner that exposes a nginx proxy that forwards traffic on port 12345 to a local unix socket. Currently, there is a test http server listening in the same container on unix:/var/run/nginxproy.sock.
 
-4. Use wget https://host:12345 to recieve http responses from the proxied http server. If the certificate is valid, then the nginx proxy will preform TLS encryption on the incoming/outgoing traffic and forward unencrypted traffic to the unix socket.
+4. Use wget --no-check-certificate http://host:12345 to recieve http responses from the proxied http server. If the certificate is valid, then the nginx proxy will preform TLS encryption on the incoming/outgoing traffic and forward unencrypted traffic to the unix socket.
+
+5. Copy the docker crt to ./ and run wget -S --secure-protocol=auto --ca-certificate=server.crt https://host:12345 for an https connection.
+

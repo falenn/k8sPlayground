@@ -42,7 +42,8 @@ if [ $? -eq 0 ]; then
         -it \
         --ulimit memlock=-1:-1 \
         --privileged=true \
-        -p 9090:80 -p 4430:443 -p 12345:12345 \
+        -p 443:443 \
+	-v $(pwd):/usr/local/nginx/ssl/certs/ \
         $REPO_AND_IMAGE
   #$REPO_AND_IMAGE
         #for debugging

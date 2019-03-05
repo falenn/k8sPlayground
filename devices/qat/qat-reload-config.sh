@@ -1,8 +1,4 @@
-#service qat_service stop
-#service qat_service shutdown
-#for x in {0..47};do cp -f /root/k8sPlayground/devices/qat/c6xx_dev0.conf.example /etc/c6xxvf_dev${x}.conf;done
-#service qat_service start
-#systemctl start qat_service
+service qat_service start
 echo "################################################"
 echo "################################################"
 echo "################################################"
@@ -10,7 +6,6 @@ echo "################################################"
 echo "################################################"
 echo "################################################"
 echo "################################################"
-#systemctl status qat_service
 #echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
 #rmmod usdm_drv
 #insmod ./QAT/build/usdm_drv.ko max_huge_pages=1024 max_huge_pages_per_process=16

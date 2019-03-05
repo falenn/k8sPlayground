@@ -13,4 +13,4 @@ chmod 666 /dev/usdm_drv
 chmod 666 /dev/qat_dev_processes
 
 #docker run -it --ulimit memlock=16834000:16834000 $devpara --privileged=true meadowgate/qat-centos7:1.0 /bin/bash
-docker run -it  --ulimit memlock=-1:-1 --privileged=true -p 9090:80 -p 4430:443 meadowgate/qat-centos7:1.0
+docker run -it  --ulimit memlock=-1:-1 --privileged=true -p 443:443 meadowgate/qat-centos7:1.0

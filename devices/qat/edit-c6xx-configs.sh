@@ -1,6 +1,5 @@
 setenforce 0
-sed -i 's/\[SSL\]/\[SHIM\]/g' /etc/c6xx*
-service qat_service restart
+#sed -i 's/\[SSL\]/\[SHIM\]/g' /etc/c6xx*
 echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
 rmmod usdm_drv
 insmod ./QAT/build/usdm_drv.ko max_huge_pages=1024

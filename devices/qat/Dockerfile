@@ -1,4 +1,4 @@
-FROM centos:7.2.1511
+FROM centos:7.2.1511 as builder
 
 # use env variables to define working directories and versions.
 # example
@@ -24,8 +24,7 @@ WORKDIR ${BUILD_DIR}
 
 RUN yum install -y perl.x86_64 gcc.x86_64 make \
                    autoconf automake libtool \
-                   zlib*.x86_64 pcre-*.x86_64 \
-                   man
+                   zlib*.x86_64 pcre-*.x86_64
 
 COPY ./${OPENSSL_PACKED} ${BUILD_DIR}
 COPY ./${NGINX_PACKED} ${BUILD_DIR}
@@ -43,7 +42,21 @@ RUN cd ${BUILD_DIR}/${OPENSSL} && ./config --prefix=${SSL_INSTALL_DIR} && \
 	cd ${BUILD_DIR}
 
 # Building QAT_Engine
-RUN cd ${BUILD_DIR}/${QATE} && ./autogen.sh && ./configure --with-qat_dir=${BUILD_DIR}/${QAT_DRIVER} --with-openssl_dir=${BUILD_DIR}/${OPENSSL}/ --with-openssl_install_dir=${SSL_INSTALL_DIR} --enable-openssl_install_build_arch_path --enable-qat_for_openssl_110 --enable-upstream_driver --enable-usdm --enable-qat_warnings --enable-qat_debug --enable-qat_mem_warnings --enable-qat_mem_debug --with-qat_debug_file=${BUILD_DIR}/qat-engine.log; make && make install && cp -f ${SSL_INSTALL_DIR}/lib/libqat.so ${SSL_INSTALL_DIR}/lib/engines-1.1/qat.so && cd ${BUILD_DIR}/${QATE}/${QATE_CONFIG} && cp c6xx_dev* /etc/ && touch /etc/ld.so.conf.d/usrlocal.conf && echo "${SSL_INSTALL_DIR}/lib/" > /etc/ld.so.conf.d/usrlocal.conf && echo "${BUILD_DIR}/${QAT_DRIVER}/build/" >> /etc/ld.so.conf.d/usrlocal.conf && ldconfig -v && cd ${BUILD_DIR}
+RUN cd ${BUILD_DIR}/${QATE} && ./autogen.sh \
+&& ./configure --with-qat_dir=${BUILD_DIR}/${QAT_DRIVER} \
+--with-openssl_dir=${BUILD_DIR}/${OPENSSL}/ \
+--with-openssl_install_dir=${SSL_INSTALL_DIR} \
+--enable-openssl_install_build_arch_path --enable-qat_for_openssl_110 \
+--enable-upstream_driver --enable-usdm --enable-qat_warnings \
+--enable-qat_debug --enable-qat_mem_warnings --enable-qat_mem_debug \
+--with-qat_debug_file="/tmp/qat-engine.log"; \
+make && make install && cp -f ${SSL_INSTALL_DIR}/lib/libqat.so \
+${SSL_INSTALL_DIR}/lib/engines-1.1/qat.so && \
+cd ${BUILD_DIR}/${QATE}/${QATE_CONFIG} && cp c6xx_dev* /etc/ \
+&& touch /etc/ld.so.conf.d/usrlocal.conf \
+&& echo "${SSL_INSTALL_DIR}/lib/" > /etc/ld.so.conf.d/usrlocal.conf \
+&& echo "${BUILD_DIR}/${QAT_DRIVER}/build/" >> /etc/ld.so.conf.d/usrlocal.conf \
+&& ldconfig -v && cd ${BUILD_DIR}
 
 # Building Qzip
 RUN cd ${BUILD_DIR}/${QATZ} && \ 
@@ -52,12 +65,39 @@ RUN cd ${BUILD_DIR}/${QATZ} && \
 	make && make all install && \
 	 cd ${BUILD_DIR}
  
-RUN cd ${BUILD_DIR}/${NGINX} && ./configure --prefix=${NGINX_INSTALL_DIR} --with-http_ssl_module --with-stream --with-stream_ssl_module --add-dynamic-module=modules/nginx_qatzip_module --add-dynamic-module=modules/nginx_qat_module/ --with-cc-opt="-DNGX_SECURE_MEM -I${SSL_INSTALL_DIR}/include/ -I${BUILD_DIR}/${QAT_DRIVER}/include -Wno-error=deprecated-declarations" --with-ld-opt="-Wl,-rpath=${SSL_INSTALL_DIR}lib -L${SSL_INSTALL_DIR}lib -L${SSL_INSTALL_DIR}/include/ -lqatzip -lz" && make && make install && cd ${BUILD_DIR}
+RUN cd ${BUILD_DIR}/${NGINX} && \
+./configure --prefix=${NGINX_INSTALL_DIR} \
+--with-http_ssl_module --with-stream --with-stream_ssl_module \
+--add-dynamic-module=modules/nginx_qatzip_module \ 
+--add-dynamic-module=modules/nginx_qat_module/ \ 
+--with-cc-opt="-DNGX_SECURE_MEM -I${SSL_INSTALL_DIR}/include/ \
+-I${BUILD_DIR}/${QAT_DRIVER}/include -Wno-error=deprecated-declarations" \ 
+--with-ld-opt="-Wl,-rpath=${SSL_INSTALL_DIR}lib \
+-L${SSL_INSTALL_DIR}lib -L${SSL_INSTALL_DIR}/include/ -lqatzip -lz" \
+&& make && make install && cd ${BUILD_DIR}
 
-COPY ./init.sh ${BUILD_DIR}/
-RUN chmod 555 ${BUILD_DIR}/init.sh
+FROM centos:7.2.1511
 
-EXPOSE 80/tcp 80/udp 443/tcp 443/udp 12345/tcp 12345/udp
+ENV NGINX_INSTALL_DIR=/usr/local/nginx/ \
+    SSL_INSTALL_DIR=/usr/local/ssl/
 
-COPY ./nginx.conf /usr/local/nginx/conf/
-CMD ["/bin/bash", "/build/init.sh"]
+RUN yum install -y iproute2 iptables
+
+COPY --from=builder ${SSL_INSTALL_DIR} ${SSL_INSTALL_DIR}
+COPY --from=builder /etc/ld.so.conf.d/usrlocal.conf /etc/ld.so.conf.d/usrlocal.conf
+COPY --from=builder ${NGINX_INSTALL_DIR} ${NGINX_INSTALL_DIR} 
+COPY --from=builder /usr/local/lib/ /usr/local/lib/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /build/QAT/build/libqat_s.so /usr/lib/
+COPY --from=builder /build/QAT/build/libusdm_drv_s.so /usr/lib/
+COPY --from=builder /build/QAT/build/adf_ctl /usr/bin/
+COPY --from=builder /root/.bashrc /root/.bashrc
+
+COPY ./init.sh /
+RUN echo -e "/usr/local/lib/\n/usr/local/ssl/lib" > /etc/ld.so.conf.d/usrlocal.conf && \ 
+    ldconfig && chmod 555 /init.sh
+
+EXPOSE 443/tcp 443/udp
+
+COPY ./nginx.conf ${NGINX_INSTALL_DIR}/conf/
+CMD ["/bin/bash", "/init.sh"]

@@ -9,16 +9,33 @@ spec:
     name: nginx-sidecar
     securityContext:
       privileged: true
+      capabilities:
+        add:
+          [SYS_ADMIN]
+    volumeMounts:
+            - mountPath: /dev
+              name: dev-mount
+            - mountPath: /etc/c6xxvf_dev0.conf
+              name: dev0
     resources:
       requests:
-        qat.intel.com/generic: 2
-        memory: 2Gi
+        qat.intel.com/generic: '1'
+        memory: 3Gi
         hugepages-2Mi: 2Gi
       limits:
-        qat.intel.com/generic: 2
+        qat.intel.com/generic: '1'
         memory: 3Gi
         hugepages-2Mi: 2Gi
     ports:
       - containerPort: 443
-    command: ["/bin/sh", "-c" , "/build/init.sh && while true ; do sleep 1000 ; done"]
+    command: ["/bin/sh", "-c" , "/init.sh && while true ; do sleep 30000; done"]
+  - image: mlabbe/iperf
+    name: iperf2-container
+  volumes:
+  - name: dev-mount
+    hostPath:
+        path: /dev
+  - name: dev0
+    hostPath:
+        path: /etc/c6xxvf_dev0.conf
   nodeName: minikube

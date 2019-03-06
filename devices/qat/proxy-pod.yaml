@@ -1,41 +1,83 @@
 apiVersion: v1
-kind: Pod
+kind: Namespace
+metadata:
+  name: nginx-sidecar
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-sidecar-backend
+  namespace: nginx-sidecar
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: nginx-sidecar
+  name: nginx-sidecar-backend-role
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: read-pods
+  namespace: nginx-sidecar
+roleRef:
+  kind: Role
+  name: nginx-sidecar-backend-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Deployment
+apiVersion: apps/v1
 metadata:
   name: nginxproxied-pod
+  namespace: nginx-sidecar
 spec:
-  restartPolicy: OnFailure
-  containers:
-  - image: meadowgate/qat-centos7:1.0
-    name: nginx-sidecar
-    securityContext:
-      privileged: true
-      capabilities:
-        add:
-          [SYS_ADMIN]
-    volumeMounts:
-            - mountPath: /dev
-              name: dev-mount
-            - mountPath: /etc/c6xxvf_dev0.conf
-              name: dev0
-    resources:
-      requests:
-        qat.intel.com/generic: '1'
-        memory: 3Gi
-        hugepages-2Mi: 2Gi
-      limits:
-        qat.intel.com/generic: '1'
-        memory: 3Gi
-        hugepages-2Mi: 2Gi
-    ports:
-      - containerPort: 443
-    command: ["/bin/sh", "-c" , "/init.sh && while true ; do sleep 30000; done"]
-  - image: mlabbe/iperf
-    name: iperf2-container
-  volumes:
-  - name: dev-mount
-    hostPath:
-        path: /dev
-  - name: dev0
-    hostPath:
-        path: /etc/c6xxvf_dev0.conf
-  nodeName: minikube
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginxproxy
+  template:
+    metadata:
+      labels:
+        app: nginxproxy
+    spec:
+      serviceAccount: nginx-sidecar-backend
+      restartPolicy: Always
+      containers:
+      - image: meadowgate/qat-centos7:1.0
+        name: nginx-sidecar
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              [SYS_ADMIN]
+        volumeMounts:
+                - mountPath: /dev
+                  name: dev-mount
+                - mountPath: /etc/c6xxvf_dev0.conf
+                  name: dev0
+        resources:
+          requests:
+            qat.intel.com/generic: '1'
+            memory: 3Gi
+            hugepages-2Mi: 2Gi
+          limits:
+            qat.intel.com/generic: '1'
+            memory: 3Gi
+            hugepages-2Mi: 2Gi
+        ports:
+          - containerPort: 443
+        command: ["/bin/sh", "-c" , "/init.sh && while true ; do sleep 30000; done"]
+      - image: mlabbe/iperf
+        name: iperf2-container
+      volumes:
+      - name: dev-mount
+        hostPath:
+            path: /dev
+      - name: dev0
+        hostPath:
+            path: /etc/c6xxvf_dev0.conf
+      nodeName: minikube

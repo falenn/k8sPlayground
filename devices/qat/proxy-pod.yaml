@@ -22,8 +22,12 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: read-pods
+  name: nginx-sidecar-backend-role-binding
   namespace: nginx-sidecar
+subjects:
+  - kind: ServiceAccount
+    name: nginx-sidecar-backend
+    namespace: nginx-sidecar
 roleRef:
   kind: Role
   name: nginx-sidecar-backend-role

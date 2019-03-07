@@ -16,7 +16,7 @@ metadata:
   name: nginx-sidecar-backend-role
 rules:
 - apiGroups: [""] # "" indicates the core API group
-  resources: ["pods"]
+  resources: ["pods","secrets"]
   verbs: ["get", "watch", "list"]
 ---
 kind: RoleBinding
@@ -36,20 +36,22 @@ roleRef:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: nginxproxied-pod
+  name: nginxproxied-deployment
   namespace: nginx-sidecar
-spec:
+spec: #add pod to this spec
   replicas: 1
   selector:
     matchLabels:
       app: nginxproxy
   template:
     metadata:
+      name: nginxproxied-pod
+      namespace: nginx-sidecar
       labels:
         app: nginxproxy
     spec:
-      serviceAccount: nginx-sidecar-backend
       restartPolicy: Always
+      serviceAccountName: nginx-sidecar-backend
       containers:
       - image: meadowgate/qat-centos7:1.0
         name: nginx-sidecar

@@ -2,5 +2,48 @@
 # Help from: https://github.com/magic7s/ansible-kubeadm-contiv/blob/master/roles/master/tasks/main.yml
 ---
 - name: Resest Kubeadm if first run
-  command: /usr/bin/kubeadm reset
+  command: kubeadm reset
   when: k8s_reset_before_init
+
+- name: kubeadm init with token
+  command: kubeadm init --token {{ kubeadm_token }} --service-cidr {{ k8s_kubelet_service_cidr }}
+
+- name: wait for k8s to start
+  wait_for:
+    port: 6443
+    delay: 10
+    timeout: 300
+
+- name: allow permissive RBAC rules
+  command: "kubectl --kubeconfig /etc/kubernetes/admin.conf create clusterrolebinding \
+  permissive-binding \
+  --clusterrole=cluster-admin \
+  --user=admin \
+  --user=kubelet \
+  --group=system:serviceaccounts"
+
+- name: taint master node
+  command: kubectl --kubeconfig /etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/master-
+
+- name: create .kube dir
+  file:
+    path: ~{{ ansible_remote_user }}/.kube
+    state: directory
+    owner: "{{ ansible_remote_user }}"
+    group: "{{ ansible_remote_user }}"
+    force: yes
+    mode: 0400
+
+- name: copy config file to root/.kube dir
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    remote_src: yes
+    owner: root
+    group: root
+    force: yes
+    mode: 0400
+
+- pause:
+    minutes: 3
+    prompt: "Make sure network pods are started"

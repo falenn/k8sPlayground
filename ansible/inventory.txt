@@ -1,46 +1,34 @@
 # this is an example inventory file.
 # By not specifying localhost, localhost is contacted as the
 # ansible controller, w/o ssh, aka locally by default.
+# we enumerate the group of hosts in the inventory so that
+# variables are shared via group_vars
 
 [all:vars]
 ansible_user=ansible
 ansible_connection=ssh
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-[default]
-c0
-c1
-c2
-c3
-
-[master]
-c0 ansible_ssh_host=c0
-
-[node]
-c1
-c2
-c3
-hpnvme1
-
-[k8s]
-c0
-c1
-c2
-c3
-hpnvme1
-
-# we enumerate the group of hosts in the inventory so that
-# variables are shared via group_vars
-[k8s-cni-multus-sriov]
-c0
-c1
-c2
-c3
-hpnvme1
-
+# Nodes that have docker installed on them
 [docker]
 c0
 c1
 c2
 c3
-hpnvme1
+
+# Master k8s nodes
+[master]
+c0 ansible_ssh_host=c0
+
+# Nodes, other than master in the k8s cluster
+[node]
+c1
+c2
+c3
+
+# Nodes with IB interfaces for SR-IOV
+[k8s-cni-multus-sriov]
+c0
+c1
+c2
+c3

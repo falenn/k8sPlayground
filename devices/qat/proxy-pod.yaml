@@ -1,60 +1,62 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: nginx-sidecar
+  name: nginxscp
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: nginx-sidecar-backend
-  namespace: nginx-sidecar
+  name: nginxscp-serviceaccount
+  namespace: nginxscp
 ---
-kind: Role
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  namespace: nginx-sidecar
-  name: nginx-sidecar-backend-role
-rules:
-- apiGroups: [""] # "" indicates the core API group
-  resources: ["pods","secrets"]
-  verbs: ["get", "watch", "list"]
----
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: nginx-sidecar-backend-role-binding
-  namespace: nginx-sidecar
+  name: nginxscp-rolebindingcluster
 subjects:
   - kind: ServiceAccount
-    name: nginx-sidecar-backend
-    namespace: nginx-sidecar
+    name: nginxscp-serviceaccount
+    namespace: nginxscp
 roleRef:
-  kind: Role
-  name: nginx-sidecar-backend-role
+  kind: ClusterRole
+  name: system:node-bootstrapper 
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: auto-approve-csrs-for-nginxscp-serviceaccount
+subjects:
+- kind: ServiceAccount
+  name: nginxscp-serviceaccount
+  namespace: nginxscp
+roleRef:
+  kind: ClusterRole
+  name: system:certificates.k8s.io:certificatesigningrequests:nodeclient
   apiGroup: rbac.authorization.k8s.io
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: nginxproxied-deployment
-  namespace: nginx-sidecar
-spec: #add pod to this spec
+  name: nginxscp-deployment
+  namespace: nginxscp
+spec: 
   replicas: 1
   selector:
     matchLabels:
-      app: nginxproxy
+      app: nginx-sidecar
   template:
     metadata:
-      name: nginxproxied-pod
-      namespace: nginx-sidecar
+      name: nginxscp-pod
+      namespace: nginxscp
       labels:
-        app: nginxproxy
+        app: nginx-sidecar
     spec:
       restartPolicy: Always
-      serviceAccountName: nginx-sidecar-backend
+      serviceAccountName: nginxscp-serviceaccount
       containers:
       - image: meadowgate/qat-centos7:1.0
-        name: nginx-sidecar
+        name: nginxscp
         securityContext:
           privileged: true
           capabilities:

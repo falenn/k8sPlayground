@@ -36,10 +36,8 @@
    notify: start_docker_handler
  - debug: var=docker_daemon_json
 
-
-
-
-
-# install docker
-
-# start docker with CIDR stuff
+ - name: enable service docker-ce and ensure it is not masked
+   systemd:
+     name: docker-ce
+     enabled: yes
+     masked: no

@@ -6,6 +6,9 @@ remote_tmp_dir: /tmp
 ansible_remote_user: ansible
 
 # kubeadm
+# generate a token by running kubeadm token generate.
+# supply the token to ansible:
+# ansible-playbook k8s-install --extra_vars="token=`kubeadm token generate`"
 kubeadm_token: "{{ token }}"
 kubeadm_reset_before_init: true
 # k8s master node - master1 pulled from inventory

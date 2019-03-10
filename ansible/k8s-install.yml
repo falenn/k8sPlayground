@@ -20,7 +20,6 @@
   connection: ssh
   roles:
     - k8s
-    - kubeadm
     - k8s-master
 
 - name: Install K8s Nodes

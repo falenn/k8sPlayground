@@ -3,14 +3,17 @@ k8s_system_user: root
 k8s_system_group: root
 k8s_version: 1.13*
 k8s_cni_version: 0.6.*
-k8s_reset_before_init: no
+k8s_reset_before_init: yes
 k8s_master_port: 6443
-k8s_kubelet_service_cidr: 10.244.0.0/16
 k8s_kubelet_cgroup_driver: cgroupfs
 k8s_kubelet_network_plugin: cni
+kubeadm_token: "{{ token }}"
+# k8s master node - master1 pulled from inventory
+k8s_master_ip: "{{ hostvars['master']['ansible_eth0'][ipv4']['address'] }}"
+k8s_kubelet_service_cidr: 10.244.0.0/16
 
 # Contains all the configurations for the kubelet - there's a lot
-# kbs_kubelet_config: /var/lib/kubelet/config.yaml
+# k8s_kubelet_config: /var/lib/kubelet/config.yaml
 
 # Contains extra args:  KUBELET_EXTRA_ARGS=  - generally empty
 # k8s_kubelet_env_file: /etc/sysconfig/kubelet

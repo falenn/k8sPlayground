@@ -13,9 +13,27 @@ if [[ -n "$KUBERNETES_SERVICE_HOST" ]];then
 /usr/local/ssl/bin/openssl genrsa -out server.key 2048
 /usr/local/ssl/bin/openssl req -new -key server.key -out server.csr -subj "/CN=nginxscp.svc"
 
+CSR_NAME=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 ; echo '')
+
+cat <<EOF > csr.json
+{
+"apiVersion": "certificates.k8s.io/v1beta1", 
+"kind": "CertificateSigningRequest",
+"metadata": {
+  "name": "nginx-sidecar-csr-${CSR_NAME}", 
+  "namespace": "nginx-sidecar"
+  }, 
+"spec": {
+  "groups": [ "system:serviceaccounts", "system:serviceaccounts:nginxscp", "system:authenticated"],
+  "request": "$(cat server.csr | base64 | tr -d '\n')", 
+  "usages": ["digital signature", "key encipherment", "server auth"]
+  }
+}
+EOF
+
 #### randomize the csr name #####
 # post csr
-curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -sSk -H "Content-Type: application/json" -H"Authorization: Bearer $(</var/run/secrets/kubernetes.io/serviceaccount/token)" -X POST -d @testjson.json https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/certificates.k8s.io/v1beta1/certificatesigningrequests
+curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -sSk -H "Content-Type: application/json" -H"Authorization: Bearer $(</var/run/secrets/kubernetes.io/serviceaccount/token)" -X POST -d @csr.json https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/certificates.k8s.io/v1beta1/certificatesigningrequests
 
 # check for creation of csr
 

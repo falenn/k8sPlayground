@@ -41,7 +41,7 @@ metadata:
   name: nginxscp-deployment
   namespace: nginxscp
 spec: 
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: nginx-sidecar

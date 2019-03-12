@@ -11,8 +11,9 @@ cd /usr/local/nginx/ssl/certs/
 if [[ -n "$KUBERNETES_SERVICE_HOST" ]];then
 # k8s namespace signed cert
 /usr/local/ssl/bin/openssl genrsa -out server.key 2048
-/usr/local/ssl/bin/openssl req -new -key server.key -out server.csr -subj "/CN=nginxscp.svc"
+/usr/local/ssl/bin/openssl req -new -key server.key -out server.csr -extensions san -config <(echo "[req]"; echo distinguished_name=req; echo "[san]"; echo subjectAltName=DNS:example.com,DNS:example.net,IP.1:127.0.0.1,IP.2:$(hostname -i),IP.3:$(hostname)) -subj "/CN=nginxscp.com"
 
+#randomize-csr-name
 CSR_NAME=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 ; echo '')
 
 cat <<EOF > csr.json
@@ -30,8 +31,8 @@ cat <<EOF > csr.json
   }
 }
 EOF
+# check for existance of csr
 
-#### randomize the csr name #####
 # post csr
 curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -sSk -H "Content-Type: application/json" -H"Authorization: Bearer $(</var/run/secrets/kubernetes.io/serviceaccount/token)" -X POST -d @csr.json https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/certificates.k8s.io/v1beta1/certificatesigningrequests
 
@@ -39,8 +40,20 @@ curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -sSk -H "C
 
 # post approval
 
+# watch for cert
+
 # get csr ## includes status certificate section if valid.
-curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -sSk -H "Content-Type: application/json" -H"Autorization: Bearer $(</var/run/secrets/kubernetes.io/serviceaccount/token)" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/nginx-sidecar-csr
+SERVERCERT=""
+while [[ -z "${SERVERCERT}" ]] ;do
+
+SERVERCERT="$(curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -sSk -H "Content-Type: application/json" -H"Authorization: Bearer $(</var/run/secrets/kubernetes.io/serviceaccount/token)" https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_PORT_443_TCP_PORT/apis/certificates.k8s.io/v1beta1/certificatesigningrequests/nginx-sidecar-csr-${CSR_NAME} | grep -A 10 status | grep \"certificate\" | awk '{print $2}' | tr -d \"\\n )" 
+sleep 1
+echo "waiting on approval"
+done
+
+echo "certificate approved!"
+echo ${SERVERCERT} | base64 -d > server.crt
+
 
 else
 # self signed cert

@@ -63,10 +63,12 @@ spec:
             add:
               [SYS_ADMIN]
         volumeMounts:
-                - mountPath: /dev
-                  name: dev-mount
-                - mountPath: /etc/c6xxvf_dev0.conf
-                  name: dev0
+        - mountPath: /dev
+          name: dev-mount
+        - mountPath: /etc/c6xxvf_dev0.conf
+          name: dev0
+        - mountPath: /var/run/sidecar.sock
+          name: shared-data
         resources:
           requests:
             qat.intel.com/generic: '1'
@@ -81,6 +83,9 @@ spec:
         command: ["/bin/sh", "-c" , "/init.sh && while true ; do sleep 30000; done"]
       - image: mlabbe/iperf
         name: iperf2-container
+        volumeMounts:
+        - name: shared-data
+          mountPath: /var/run/sidecar.sock
       volumes:
       - name: dev-mount
         hostPath:
@@ -88,4 +93,6 @@ spec:
       - name: dev0
         hostPath:
             path: /etc/c6xxvf_dev0.conf
+      - name: shared-data
+        emptyDir: {}
       nodeName: minikube

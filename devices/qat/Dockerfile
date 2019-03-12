@@ -5,11 +5,11 @@ FROM centos:7.2.1511 as builder
 # 
 
 ENV OPENSSL_PACKED=OpenSSL_1_1_0h.tar.gz \
-    NGINX_PACKED=patched_nginx_v0.3.6.tar.gz \
+    NGINX_PACKED=asynch_nginx_v0.3.7.tar.gz \
     QATE_PACKED=QAT_Engine_v0.5.39.tar.gz \
     QATZ_PACKED=QAT_Zip_v0.2.6.tar.gz \
     OPENSSL=openssl-OpenSSL_1_1_0h \
-    NGINX=asynch_mode_nginx-0.3.6 \
+    NGINX=asynch_mode_nginx-0.3.7 \
     QATE=QAT_Engine-0.5.39 \
     QATE_CONFIG=qat/config/c6xx/multi_thread_optimized \
     QATZ=QATzip-0.2.6 \
@@ -24,10 +24,11 @@ WORKDIR ${BUILD_DIR}
 
 RUN yum install -y perl.x86_64 gcc.x86_64 make \
                    autoconf automake libtool \
-                   zlib*.x86_64 pcre-*.x86_64
+                   zlib*.x86_64 pcre-*.x86_64 wget
 
 COPY ./${OPENSSL_PACKED} ${BUILD_DIR}
-COPY ./${NGINX_PACKED} ${BUILD_DIR}
+#COPY ./${NGINX_PACKED} ${BUILD_DIR}
+RUN wget -O ${NGINX_PACKED} https://github.com/intel/asynch_mode_nginx/archive/v0.3.7.tar.gz
 COPY ./${QATE_PACKED} ${BUILD_DIR}
 COPY ./${QATZ_PACKED} ${BUILD_DIR}
 COPY ./${QAT_DRIVER} ${BUILD_DIR}/${QAT_DRIVER}

@@ -1,0 +1,26 @@
+# k8s-uninstall.yml
+---
+- name: Install k8s master
+  hosts: master:node
+  remote_user: "{{ ansible_remote_user }}"
+  gather_facts: True
+  become: yes
+  become_method: sudo
+  connection: ssh
+  roles:
+    - k8s
+    - docker
+   tasks:
+    - include_role:
+        name: k8s
+        tasks_from: uninstall
+    - include_role:
+        name: docker
+        tasks_from: uninstall
+    - include_role:
+        name: k8s-mlx-sriov
+        tasks_from: uninstall
+    - include_role:
+        name: k8s-multus
+        tasks_from: uninstall
+    

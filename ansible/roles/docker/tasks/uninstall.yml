@@ -1,0 +1,11 @@
+# k8s/tasks/uninstall
+---
+- name: Uninstall Docker
+  yum:
+    name: "{{ packages }}"
+    state: uninstalled
+  vars:
+    packages:
+     - "{{ docker_version }}"
+  register: docker_yum_uninstall
+- debug: var=docker_yum_uninstall

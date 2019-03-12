@@ -1,31 +1,5 @@
-# K8s
+# k8s/tasks/main.yml
 ---
-- name: Add k8s yum_repository
-  yum_repository:
-    name: kubernetes
-    description: Kubernetes YUM Repo
-    file: kubernetes
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    enabled: yes
-    gpgcheck: yes
-    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-
-- name: Install k8s
-  yum:
-    name: "{{ packages }}"
-    state: installed
-  vars:
-    packages:
-     - "kubelet-{{ k8s_version }}"
-     - "kubeadm-{{ k8s_version }}"
-     - "kubectl-{{ k8s_version }}"
-     - "kubernetes-cni-{{ k8s_cni_version }}"
-  register: k8s_yum_install
-  notify: start_kubelet_handler
-- debug: var=k8s_yum_install
-
-- name: enable service kubelet and ensure it is not masked
-  systemd:
-    name: kubelet
-    enabled: yes
-    masked: no
+# Install the multus CNI binary
+ - name: Install k8s
+   import_tasks: install.yml

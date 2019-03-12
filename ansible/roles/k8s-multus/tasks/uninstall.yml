@@ -1,0 +1,16 @@
+# k8s-multus/tasks/uninstall.yml
+---
+- name: Remove k8s_cni_multus_config
+  file:
+    state: absent
+    path: "{{ k8s_cni_config_dir }}/{{ k8s_cni_multus_config_filename }}"
+  register: k8s_cni_multus_config_uninstalled
+- debug: var=k8s_cni_multus_config_uninstalled
+
+# Remove the cni binary file
+- name: Remove k8s_cni_multus_binary
+  file:
+    state: absent
+    path: "{{ k8s_cni_bin_dir }}/{{ k8s_cni_multus_binary_name_deployed }}"
+  register: k8s_cni_multus_binary_uninstalled
+- debug: var=k8s_cni_multus_binary_uninstalled

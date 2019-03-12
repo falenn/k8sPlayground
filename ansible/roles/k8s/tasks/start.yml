@@ -1,0 +1,6 @@
+# docker/tasks/start.yml
+---
+- name: start_kubelet
+  service:
+    name: kubelet
+    state: restarted	#or start if the first time

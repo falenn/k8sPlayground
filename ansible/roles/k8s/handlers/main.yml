@@ -3,4 +3,4 @@
 - name: start_kubelet_handler
   service:
     name: kubelet
-    state: restarted	#or start if the first time
+    state: restarted #or start if the first time

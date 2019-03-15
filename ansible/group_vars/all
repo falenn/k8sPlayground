@@ -9,8 +9,8 @@ ansible_remote_user: ansible
 # generate a token by running kubeadm token generate.
 # supply the token to ansible:
 # ansible-playbook k8s-install --extra_vars="token=`kubeadm token generate`"
-kubeadm_token: "{{ token }}"
-kubeadm_reset_before_init: true
+# kubeadm_token: "{{ token }}"
+# kubeadm_reset_before_init: true
 # k8s master node - master1 pulled from inventory
-master_ip: "{{ hostvars['master']['ansible_eth0'][ipv4']['address'] }}"
-k8s_kubelet_service_cidr: 10.244.0.0/16
+# master_ip: "{{ hostvars['master']['ansible_eth0'][ipv4']['address'] }}"
+# k8s_kubelet_service_cidr: 10.244.0.0/16

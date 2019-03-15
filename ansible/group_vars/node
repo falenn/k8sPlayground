@@ -7,10 +7,10 @@ k8s_reset_before_init: yes
 k8s_master_port: 6443
 k8s_kubelet_cgroup_driver: cgroupfs
 k8s_kubelet_network_plugin: cni
-kubeadm_token: "{{ token }}"
+#kubeadm_token: "{{ token }}"
 # k8s master node - master1 pulled from inventory
-k8s_master_ip: "{{ hostvars['master']['ansible_eth0'][ipv4']['address'] }}"
-k8s_kubelet_service_cidr: 10.244.0.0/16
+#k8s_master_ip: "{{ hostvars['master']['ansible_eth0'][ipv4']['address'] }}"
+#k8s_kubelet_service_cidr: 10.244.0.0/16
 
 # Contains all the configurations for the kubelet - there's a lot
 # k8s_kubelet_config: /var/lib/kubelet/config.yaml

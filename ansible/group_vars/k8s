@@ -1,0 +1,2 @@
+k8s_version: 1.13*
+k8s_cni_version: 0.6.*

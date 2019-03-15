@@ -6,9 +6,9 @@
     state: uninstalled
   vars:
     packages:
-     - "kubelet-{{ k8s_version }}"
-     - "kubeadm-{{ k8s_version }}"
-     - "kubectl-{{ k8s_version }}"
-     - "kubernetes-cni-{{ k8s_cni_version }}"
+     - "kubelet"
+     - "kubeadm"
+     - "kubectl"
+     - "kubernetes-cni"
   register: k8s_yum_uninstall
 - debug: var=k8s_yum_uninstall

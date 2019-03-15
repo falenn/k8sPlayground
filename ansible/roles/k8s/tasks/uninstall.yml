@@ -3,7 +3,7 @@
 - name: Uninstall k8s
   yum:
     name: "{{ packages }}"
-    state: uninstalled
+    state: removed
   vars:
     packages:
      - "kubelet"

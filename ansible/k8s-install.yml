@@ -21,8 +21,6 @@
   roles:
     - k8s
     - k8s-master
-  
-
 
 - name: Install K8s Nodes
   hosts: node

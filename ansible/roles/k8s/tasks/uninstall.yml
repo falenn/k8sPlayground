@@ -17,3 +17,8 @@
   file:
      path: "{{ k8s_cni_state_dir }}"
      state: absent
+
+- name: Remove CNI config
+  file:
+     path: "{{ k8s_cni_config_dir }}"
+     state: absent

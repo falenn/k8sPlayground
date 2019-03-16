@@ -22,3 +22,8 @@
   file:
      path: "{{ k8s_cni_config_dir }}"
      state: absent
+
+- name: Remove kubelet configs
+  file:
+     path: "{{ k8s_kubelet_config_dir }}"
+     state: absent

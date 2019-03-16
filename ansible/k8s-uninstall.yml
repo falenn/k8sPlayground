@@ -10,7 +10,7 @@
   tasks:
    - include_role:
        name: k8s
-       tasks_from: uninstall
+       tasks_from: stop:uninstall
    - include_role:
        name: docker
        tasks_from: prune_all

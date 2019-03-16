@@ -3,4 +3,4 @@
 - name: stop_kubelet
   service:
     name: kubelet
-    state: stopped	#or start if the first time
+    state: stopped #or start if the first time

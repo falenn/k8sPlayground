@@ -15,5 +15,5 @@
 
 - name: Remove CNI state
   file:
-     path: {{ k8s_cni_state_dir }}
+     path: "{{ k8s_cni_state_dir }}"
      state: absent

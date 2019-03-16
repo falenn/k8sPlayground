@@ -1,6 +1,6 @@
 # k8s-uninstall.yml
 ---
-- name: Install k8s master
+- name: Uninstall k8s
   hosts: master:node
   remote_user: "{{ ansible_remote_user }}"
   gather_facts: True

@@ -1,0 +1,6 @@
+# role/docker/tasks/prune_all.yaml
+---
+- name: docker system prune
+  command: docker system prune -f --volumes
+  register: docker_prune_system
+- debug: var=docker_prune_system

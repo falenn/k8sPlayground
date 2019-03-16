@@ -1,0 +1,6 @@
+# roles/docker/tasks/prune_images.yaml
+---
+- name: docker image prune
+  command: docker image prune -f
+  register: docker_prune_image
+- debug: var=docker_prune_image

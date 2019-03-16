@@ -7,10 +7,13 @@
   become: yes
   become_method: sudo
   connection: ssh
-  tasks:  
+  tasks:
    - include_role:
        name: k8s
        tasks_from: uninstall
+   - include_role:
+       name: docker
+       tasks_from: prune_all
 #   - name: k8s-mlx-sriov uninstall
 #     include_role:
 #       name: k8s-mlx-sriov

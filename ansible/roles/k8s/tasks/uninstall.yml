@@ -12,3 +12,8 @@
      - "kubernetes-cni"
   register: k8s_yum_uninstall
 - debug: var=k8s_yum_uninstall
+
+- name: Remove CNI state
+  file:
+     path: {{ k8s_cni_state_dir }}
+     state: absent

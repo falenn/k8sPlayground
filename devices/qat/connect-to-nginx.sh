@@ -1,1 +1,1 @@
-kubectl exec -it -n nginxscp `kubectl get pod -n nginxscp | grep -m 1 nginx | awk '{print $1}' ` bash 
+kubectl exec -it -n nginxscp `kubectl get pod -n nginxscp | grep -n ".*" | grep ${1}\: | sed 's/^..//' | awk '{print $1}' ` bash 

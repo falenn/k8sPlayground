@@ -11,7 +11,7 @@ cd /usr/local/nginx/ssl/certs/
 if [[ -n "$KUBERNETES_SERVICE_HOST" ]];then
 # k8s namespace signed cert
 /usr/local/ssl/bin/openssl genrsa -out server.key 2048
-/usr/local/ssl/bin/openssl req -new -key server.key -out server.csr -extensions san -config <(echo "[req]"; echo distinguished_name=req; echo "[san]"; echo subjectAltName=DNS:example.com,DNS:example.net,IP.1:127.0.0.1,IP.2:$(hostname -i),IP.3:$(hostname)) -subj "/CN=nginxscp.com"
+/usr/local/ssl/bin/openssl req -new -key server.key -out server.csr -extensions san -config <(echo "[req]"; echo distinguished_name=req; echo "[san]"; echo subjectAltName=DNS.1:$(hostname),DNS.2:$(hostname -i),DNS.3:127.0.0.1,IP.1:127.0.0.1,IP.2:$(hostname -i)) -subj "/CN=$(hostname)"
 
 #randomize-csr-name
 CSR_NAME=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 5 ; echo '')
@@ -63,6 +63,9 @@ fi
 ulimit -l 2048
 
 /usr/local/nginx/sbin/nginx &
-iptables -t nat -A PREROUTING -p tcp --dport 1:65535 -j REDIRECT --to-ports 443
-iptables -t nat -A PREROUTING -p udp --dport 1:65535 -j REDIRECT --to-ports 443
+#iptables -t nat -A PREROUTING -p tcp --dport 1:65535 -j REDIRECT --to-ports 443
+#iptables -t nat -A PREROUTING -p udp --dport 1:65535 -j REDIRECT --to-ports 443
+
+#./istio-iptables.sh -p 443 -m REDIRECT -b "*" -u root  
+
 cd /usr/local/nginx/

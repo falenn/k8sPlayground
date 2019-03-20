@@ -94,9 +94,10 @@ COPY --from=builder /build/QAT/build/libusdm_drv_s.so /usr/lib/
 COPY --from=builder /build/QAT/build/adf_ctl /usr/bin/
 COPY --from=builder /root/.bashrc /root/.bashrc
 
+COPY ./istio-iptables.sh /
 COPY ./init.sh /
 RUN echo -e "/usr/local/lib/\n/usr/local/ssl/lib" > /etc/ld.so.conf.d/usrlocal.conf && \ 
-    ldconfig && chmod 555 /init.sh
+    ldconfig && chmod 555 /init.sh /istio-iptables.sh
 
 EXPOSE 443/tcp 443/udp
 

@@ -86,6 +86,7 @@ spec:
         volumeMounts:
         - name: shared-data
           mountPath: /var/run/sidecar.sock
+        command: ["/bin/sh", "-c" , "while true ; do sleep 30000; done"]
       volumes:
       - name: dev-mount
         hostPath:

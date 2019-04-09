@@ -38,6 +38,6 @@
 
 - name: enable service docker-ce and ensure it is not masked
   systemd:
-    name: docker-ce
+    name: docker
     enabled: yes
     masked: no

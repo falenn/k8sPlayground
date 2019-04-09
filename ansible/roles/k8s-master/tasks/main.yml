@@ -8,7 +8,7 @@
 - name: Create token
   command: kubeadm token generate
   register: kubeadm_token
-
+- debug: var=kubeadm_token
 
 
 - name: kubeadm init with token

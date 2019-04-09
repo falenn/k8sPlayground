@@ -1,6 +1,5 @@
 # kubeadm
 kubeadm_reset_before_init: yes
-kubeadm_token: "{{ token }}"
 # k8s master node - master1 pulled from inventory
 k8s_master_ip: "{{ hostvars['master']['ansible_eth0'][ipv4']['address'] }}"
 k8s_kubelet_service_cidr: 10.244.0.0/16

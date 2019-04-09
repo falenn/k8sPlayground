@@ -7,7 +7,7 @@
 ---
 - name: Reset kubeadm before init in case this is not the first run
   command: kubeadm reset
-  when: kubeadm_reset_before_init
+  when: k8s_reset_before_init
 
 - name: kubeadm join with pre generated token
   command: kubeadm join --token {{ kubeadm_token }} {{ k8s_master_ip }}:{{ k8s_master_port }} --discovery-token-unsafe-skip-ca-verification

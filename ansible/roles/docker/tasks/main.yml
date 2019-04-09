@@ -1,0 +1,5 @@
+# docker/tasks/main.yml
+---
+# Install docker
+ - name: Install docker
+   import_tasks: install.yml

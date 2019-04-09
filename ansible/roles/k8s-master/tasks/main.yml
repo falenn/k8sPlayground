@@ -5,8 +5,14 @@
   command: kubeadm reset
   when: k8s_reset_before_init
 
+- name: Create token
+  command: kubeadm token generate
+  register: kubeadm_token
+
+
+
 - name: kubeadm init with token
-  command: kubeadm init --token {{ kubeadm_token }} --service-cidr {{ k8s_kubelet_service_cidr }}
+  command: kubeadm init --token {{ kubeadm_token.stdout }} --service-cidr {{ k8s_kubelet_service_cidr }}
 
 - name: wait for k8s to start
   wait_for:

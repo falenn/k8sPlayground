@@ -12,7 +12,7 @@
    - docker
 
 - name: Install k8s master
-  hosts: master
+  hosts: k8s
   remote_user: "{{ ansible_remote_user }}"
   gather_facts: True
   become: yes

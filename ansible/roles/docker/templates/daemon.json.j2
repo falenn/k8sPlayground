@@ -2,7 +2,7 @@
   "exec-opts": ["{{ docker_exec_opts }}"],
   "data-root": "{{ docker_data_root }}",
   "storage-driver": "{{ docker_storage_driver }}",
-  "insecure-registries": ["{{ docker_insecure_registries }}"]
-  "log-driver": "{{ docker_log_driver }}"
-  "log-opts": " {{ docker_log_opts }}"
+  "insecure-registries": ["{{ docker_insecure_registries }}"],
+  "log-driver": "{{ docker_log_driver }}",
+  "log-opts": "{{ docker_log_opts }}"
 }

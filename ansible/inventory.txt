@@ -11,10 +11,14 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 # Nodes that have docker installed on them
 [docker]
+c0
+c1
 c2
 c3
 
 [k8s]
+c0
+c1
 c2
 c3
 

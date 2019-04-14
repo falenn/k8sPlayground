@@ -13,6 +13,8 @@
 
 - name: kubeadm init with token
   command: kubeadm init --token {{ kubeadm_token.stdout }} --service-cidr {{ k8s_kubelet_service_cidr }}
+  register: kubeadm_init_result
+- debug: var=kubeadm_init_result
 
 - name: wait for k8s to start
   wait_for:

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ttyd
+  labels:
+    app: ttyd
+spec:
+  containers:
+  - image: tsl0922/ttyd
+    imagePullPolicy: IfNotPresent
+    name: ttyd
+  restartPolicy: Always
+---
+apiVersion: v1
+ kind: Service
+ metadata:
+   name: ttyd
+   labels:
+     app: ttyd
+ spec:
+   type: NodePort
+   ports:
+     - port: 7681
+       nodePort: 30001
+   selector:
+     app: ttyd

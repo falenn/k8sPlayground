@@ -3,13 +3,12 @@
 ---
 - name: Resest Kubeadm if first run
   command: kubeadm reset
-  when: k8s_reset_before_init
+  when: kubeadm_reset_before_init
 
 - name: Create token
-  command: kubeadm token generate
+  command: kubeadm token create
   register: kubeadm_token
 - debug: var=kubeadm_token
-
 
 - name: kubeadm init with token
   command: kubeadm init --token {{ kubeadm_token.stdout }} --service-cidr {{ k8s_kubelet_service_cidr }}

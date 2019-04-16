@@ -7,11 +7,20 @@
   command: kubeadm reset -f
   when: k8s_reset_before_init
 
-# Need to run this on the master node
-#- name: Create token
-#  command: kubeadm token create
-#  register: kubeadm_token
-#- debug: var=kubeadm_token
+# this is not going to work because the info has not been copied to the hosts
+- name: copy connection info
+  copy:
+    src: {{ node_connection_string_file }}
+    dest: {{ node_connection_string_file }}
+    owner: {{ ansible_remote_user }}
+    group: {{ ansible_remote_user }}
+    mode: 0644
+
+- hosts: all
+  vars:
+    connection_info: {{ lookup('file', '{{ node_connection_string_file }}') }}
+  tasks:
+     - debug: msg="connection string: {{ connection_info }}"
 
 - name: kubeadm join with pre generated token
-  command: kubeadm join --token {{ kubeadm_token }} {{ k8s_master_ip }}:{{ k8s_master_port }} --discovery-token-unsafe-skip-ca-verification
+  command: kubeadm join {{ connection_info }}

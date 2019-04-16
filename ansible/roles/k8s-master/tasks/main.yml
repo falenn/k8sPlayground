@@ -46,6 +46,8 @@
     force: yes
     mode: 0400
 
-- pause:
-    minutes: 1
-    prompt: "Make sure network pods are started"
+#- pause:
+#    minutes: 1
+#    prompt: "Make sure network pods are started"
+
+- local_action: copy content={{--token {{ kubeadm_token }} {{ k8s_master_ip }}:{{ k8s_master_port }} --discovery-token-unsafe-skip-ca-verification }} dest={{ node_connection_string_file }}

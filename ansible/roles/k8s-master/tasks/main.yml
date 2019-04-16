@@ -5,7 +5,7 @@
   command: kubeadm reset -f
   when: kubeadm_reset_before_init
 
-- name: kubeadm init with token
+- name: kubeadm init
   command: kubeadm init --service-cidr {{ k8s_kubelet_service_cidr }}
   register: kubeadm_init_result
 - debug: var=kubeadm_init_result
@@ -27,14 +27,14 @@
 - name: taint master node
   command: kubectl --kubeconfig /etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/master-
 
-- name: create .kube dir
+- name: create kube dir
   file:
-    path: ~{{ ansible_remote_user }}/.kube
+    path: /root/.kube
     state: directory
     owner: "{{ ansible_remote_user }}"
     group: "{{ ansible_remote_user }}"
     force: yes
-    mode: 0400
+    mode: 0700
 
 - name: copy config file to root/.kube dir
   copy:
@@ -47,5 +47,5 @@
     mode: 0400
 
 - pause:
-    minutes: 3
+    minutes: 1
     prompt: "Make sure network pods are started"

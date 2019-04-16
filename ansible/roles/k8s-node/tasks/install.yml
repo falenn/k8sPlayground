@@ -19,8 +19,7 @@
 - hosts: all
   vars:
     connection_info: {{ lookup('file', node_connection_string_file ) }}
-  tasks:
-     - debug: msg="connection string: {{ connection_info }}"
+- debug: var=connection_info
 
 - name: kubeadm join with pre generated token
   command: kubeadm join {{ connection_info }}

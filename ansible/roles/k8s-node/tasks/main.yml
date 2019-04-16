@@ -1,18 +1,3 @@
-# k8s-node/tasks/main.yml
----
-# - name: Populate service facts
-#   service_facts:
-# - debug: var=ansible_facts.services['kubelet']
-- name: Reset kubeadm before init in case this is not the first run
-  command: kubeadm reset
-  when: k8s_reset_before_init
-
-# Need to run this on the master node
-#- name: Create token
-#  command: kubeadm token create
-#  register: kubeadm_token
-#- debug: var=kubeadm_token
-
-
-- name: kubeadm join with pre generated token
-  command: kubeadm join --token {{ kubeadm_token }} {{ k8s_master_ip }}:{{ k8s_master_port }} --discovery-token-unsafe-skip-ca-verification
+# Install the multus CNI binary
+ - name: Install k8s node
+   import_tasks: install.yml

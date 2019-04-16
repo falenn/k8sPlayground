@@ -18,7 +18,7 @@
 
 - hosts: all
   vars:
-    connection_info: {{ lookup('file', '{{ node_connection_string_file }}') }}
+    connection_info: {{ lookup('file', {{ node_connection_string_file }}) }}
   tasks:
      - debug: msg="connection string: {{ connection_info }}"
 

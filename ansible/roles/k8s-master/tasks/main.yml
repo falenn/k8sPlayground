@@ -2,7 +2,7 @@
 # Help from: https://github.com/magic7s/ansible-kubeadm-contiv/blob/master/roles/master/tasks/main.yml
 ---
 - name: Resest Kubeadm if first run
-  command: kubeadm reset
+  command: kubeadm reset -f
   when: kubeadm_reset_before_init
 
 - name: kubeadm init with token

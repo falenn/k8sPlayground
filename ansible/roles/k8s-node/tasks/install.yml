@@ -16,10 +16,10 @@
     group: "{{ ansible_remote_user }}"
     mode: 0644
 
-- hosts: all
-  vars:
-    connection_info: "{{ lookup('file', node_connection_string_file ) }}"
-- debug: var=connection_info
+#- hosts: all
+#  vars:
+#    connection_info: "{{ lookup('file', node_connection_string_file ) }}"
+#- debug: var=connection_info
 
-- name: kubeadm join with pre generated token
-  command: kubeadm join {{ connection_info }}
+#- name: kubeadm join with pre generated token
+#  command: kubeadm join {{ connection_info }}

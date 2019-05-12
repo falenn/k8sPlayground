@@ -24,13 +24,17 @@ c3
 
 # Master k8s nodes
 [master]
-c2 ansible_ssh_host=c2
+c0 ansible_ssh_host=c0
 
 # Nodes, other than master in the k8s cluster
 [node]
+c1
+c2
 c3
 
 # Nodes with IB interfaces for SR-IOV
 [k8s-cni-multus-sriov]
+c0
+c1
 c2
 c3

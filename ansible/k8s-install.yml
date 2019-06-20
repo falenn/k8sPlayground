@@ -1,16 +1,5 @@
 # k8s install
 ---
-- name: Bootstrap Tasks
-  hosts: docker
-  remote_user: "{{ ansible_remote_user }}"
-  gather_facts: False
-  become: yes
-  become_method: sudo
-  connection: ssh
-  roles:
-   - common
-   - docker
-
 - name: Install k8s
   hosts: k8s
   remote_user: "{{ ansible_remote_user }}"

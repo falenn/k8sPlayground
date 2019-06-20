@@ -5,13 +5,8 @@
   command: kubeadm reset -f
   when: kubeadm_reset_before_init
 
-- name: disable Swap
-  command: "swapoff -a"
-
 - name: kubeadm init
-  command: "kubeadm init \
-   --ignore-preflight-errors={{ preflight_errors | quote }} \
-   --pod-network-cidr={{ k8s_kubelet_service_cidr }}"
+  command: kubeadm init --service-cidr {{ k8s_kubelet_service_cidr }}
   register: kubeadm_init_result
 - debug: var=kubeadm_init_result
 
@@ -22,8 +17,7 @@
     timeout: 300
 
 - name: allow permissive RBAC rules
-  command: "kubectl \
-  --kubeconfig /etc/kubernetes/admin.conf create clusterrolebinding \
+  command: "kubectl --kubeconfig /etc/kubernetes/admin.conf create clusterrolebinding \
   permissive-binding \
   --clusterrole=cluster-admin \
   --user=admin \
@@ -57,22 +51,20 @@
 #    prompt: "Make sure network pods are started"
 
 - name: Create k8s node join token 
-  command: /usr/bin/kubeadm token create
-  register: k8s_join_token
-  tags: 
-   - token
-
+  shell: /usr/bin/kubeadm token generate
+  args:
+    executable: /bin/bash
+  with_items: groups['master']
+  register: k8s_join_token_out
 - debug:
-    msg: "{{ k8s_join_token.stdout }}"
-  tags:
-   - token
+    var=k8s_join_token_out
 
+- set_fact:
+    k8s_join_token: "{{ k8s_join_token_out.stdout }}"
+
+     
 - name: Create k8s node join command
-  template:
-    src: "joincmd.sh.j2"
-    owner: root
-    group: root
-    mode: '0640'
+  copy:
+    content: "--token {{ k8s_join_token }}"
+#{{ k8s_master_ip }}:{{ k8s_master_port }} --discovery-token-unsafe-skip-ca-verification"
     dest: "{{ node_connection_string_file }}"
-  tags:
-   - token

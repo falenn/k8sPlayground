@@ -24,8 +24,8 @@
   notify: start_kubelet_handler
 - debug: var=k8s_yum_install
 
-- name: enable service kubelet and ensure it is not masked
-  systemd:
-    name: kubelet
-    enabled: yes
-    masked: no
+#- name: enable service kubelet and ensure it is not masked
+#  systemd:
+#    name: kubelet
+#    enabled: yes
+#    masked: no

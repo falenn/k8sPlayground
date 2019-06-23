@@ -6,20 +6,11 @@
 - name: Reset kubeadm before init in case this is not the first run
   command: kubeadm reset -f
   when: k8s_reset_before_init
+  tags: 
+   - node-install
 
-# this is not going to work because the info has not been copied to the hosts
-- name: copy connection info
-  copy:
-    src: "{{ node_connection_string_file }}"
-    dest: "{{ node_connection_string_file }}"
-    owner: "{{ ansible_remote_user }}"
-    group: "{{ ansible_remote_user }}"
-    mode: 0644
-
-#- hosts: all
-#  vars:
-#    connection_info: "{{ lookup('file', node_connection_string_file ) }}"
-#- debug: var=connection_info
-
-#- name: kubeadm join with pre generated token
-#  command: kubeadm join {{ connection_info }}
+# Execute the join cmd
+- name: Run joincmd script
+  script: "{{ k8s_joincmd_file }}" 
+  tags: 
+   - node-install 

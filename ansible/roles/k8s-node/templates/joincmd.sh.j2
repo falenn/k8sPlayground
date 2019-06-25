@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/bin/kubeadm join {{ k8s_master_ip }}:{{ k8s_master_port }} \
+  --token={{ k8s_join_token.stdout }} \
+  --discovery-token-unsafe-skip-ca-verification

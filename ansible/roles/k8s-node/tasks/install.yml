@@ -9,8 +9,61 @@
   tags: 
    - node-install
 
-# Execute the join cmd
-- name: Run joincmd script
-  script: "{{ k8s_joincmd_file }}" 
+- name: disable Swap
+  command: "swapoff -a"
+  tags:
+   - node-install
+ 
+# Generate join token
+- name: Generate join token
+  shell: /usr/bin/kubeadm token create --ttl 1m
+  register: k8s_join_token
+  delegate_to: "{{ k8s_master_ip }}"
+  tags:
+   - node-token
+  
+- set_fact:
+   k8s_token: "{{ k8s_join_token.stdout }}"
+  tags:
+   - node-token
+
+- debug:
+    msg: "{{ k8s_token }}"
+  tags:
+   - node-token
+
+# Installing this way does not leave a token obviously visible on the host
+- name: Install node
+  shell: |
+    /usr/bin/kubeadm \
+      join \
+      {{ k8s_master_ip }}:{{ k8s_master_port }} \
+      --token={{ k8s_token }} \
+      --discovery-token-unsafe-skip-ca-verification
+  args:
+    executable: /bin/bash
+  register: install_node_result
+  tags:
+   - node-install
+
+- debug:
+    var=install_node_result
+  when: install_node_result is defined
   tags: 
-   - node-install 
+   - node-install
+
+- name: Delete k8s token
+  shell: /usr/bin/kubeadm token delete {{ k8s_token }}
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ k8s_master_ip }}"
+  when: k8s_join_token is defined
+  register: delete_token_result
+  tags:
+   - node-install
+
+- debug:
+    var=delete_token_result
+  when: delete_token_result is defined
+  tags: 
+   - node-install

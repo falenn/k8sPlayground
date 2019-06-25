@@ -55,24 +55,3 @@
 #- pause:
 #    minutes: 1
 #    prompt: "Make sure network pods are started"
-
-- name: Create k8s node join token 
-  command: /usr/bin/kubeadm token create
-  register: k8s_join_token
-  tags: 
-   - token
-
-- debug:
-    msg: "{{ k8s_join_token.stdout }}"
-  tags:
-   - token
-
-- name: Create k8s node join command
-  template:
-    src: "joincmd.sh.j2"
-    owner: root
-    group: root
-    mode: '0640'
-    dest: "{{ node_connection_string_file }}"
-  tags:
-   - token

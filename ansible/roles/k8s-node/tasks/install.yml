@@ -5,7 +5,7 @@
 # - debug: var=ansible_facts.services['kubelet']
 - name: Reset kubeadm before init in case this is not the first run
   command: kubeadm reset -f
-  when: k8s_reset_before_init
+  when: kubeadm_reset_before_init
   tags: 
    - node-install
 
@@ -16,7 +16,7 @@
  
 # Generate join token
 - name: Generate join token
-  shell: /usr/bin/kubeadm token create --ttl 1m
+  shell: /usr/bin/kubeadm token create --ttl 10m
   register: k8s_join_token
   delegate_to: "{{ k8s_master_ip }}"
   tags:
@@ -33,8 +33,9 @@
    - node-token
 
 # Installing this way does not leave a token obviously visible on the host
-- name: Install node
+- name: Join node to cluster
   shell: |
+    swapoff -a;
     /usr/bin/kubeadm \
       join \
       {{ k8s_master_ip }}:{{ k8s_master_port }} \
@@ -47,7 +48,7 @@
    - node-install
 
 - debug:
-    var=install_node_result
+    msg: "{{ install_node_result }}"
   when: install_node_result is defined
   tags: 
    - node-install
@@ -63,7 +64,7 @@
    - node-install
 
 - debug:
-    var=delete_token_result
+    msg: "{{ delete_token_result }}"
   when: delete_token_result is defined
   tags: 
    - node-install

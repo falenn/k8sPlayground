@@ -1,29 +1,3 @@
 # K8s General
-k8s_system_user: root
-k8s_system_group: root
-# k8s_version: 1.13*
-# k8s_cni_version: 0.6.*
-k8s_reset_before_init: yes
-k8s_master: 
-k8s_master_port: 6443
-k8s_kubelet_cgroup_driver: cgroupfs
-k8s_kubelet_network_plugin: cni
-k8s_joincmd_file: /tmp/joincmd.sh
-# k8s master node - master1 pulled from inventory
-k8s_token: "{{ hostvars[groups['master'][0]].k8s_join_token }}"
-k8s_master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4']['address'] }}"
-# k8s_kubelet_service_cidr: 10.244.0.0/16
-
-# Contains all the configurations for the kubelet - there's a lot
-# k8s_kubelet_config: /var/lib/kubelet/config.yaml
-
-# Contains extra args:  KUBELET_EXTRA_ARGS=  - generally empty
-# k8s_kubelet_env_file: /etc/sysconfig/kubelet
-
-# contains flags set on kubelet KUBELET_KUBEADM_ARGS=--cgroup-driver=cgroupfs  --network-plugin=cni
-# k8s_kubelet_env_file_kubeadm_flags: /var/lib/kubelet/kubeadm-flags.env
-
-# contains info for connecting to the api server
-# k8s_kubelet_bootstrap_config: /etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf
-
-node_connection_string_file: /tmp/node.txt
+#
+#

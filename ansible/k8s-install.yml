@@ -19,6 +19,8 @@
   connection: ssh
   roles:
     - k8s-master
+    - flannel
+
 
 - name: Install K8s Nodes
   hosts: node

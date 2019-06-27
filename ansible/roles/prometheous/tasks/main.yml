@@ -1,0 +1,16 @@
+# Prometheus ansible role
+# based on https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
+---
+
+  - name: Create namespace
+    cmd: kubectl create namespace
+      delegate_to: master
+
+  - name: Create cluster role
+    cmd: kubectl create -f files/clusterRole.yml
+
+  - name: Create config map
+    cmd: kubectl create -f files/config-map.yml -n monitoring
+
+  - name: Create prometheus deployment
+    cmd: kubectl create -f files/deployment.yml -n monitoring

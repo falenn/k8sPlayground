@@ -1,0 +1,21 @@
+#curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.3.6/calicoctl
+#
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: sriov-pool
+spec:
+  cidr: 256.55.0.0/16
+  blockSize: /26  # yields allocations of 64 addresses per block / per node
+  ipipMode: false
+  natOutgoing: false
+---
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: internal-pool
+spec:
+  cidr: 192.169.0.0/16
+  blockSize: /24 # yeilds allocations of 254 addresses per block
+  ipipMode: Always
+  natOutgoing: true

@@ -1,0 +1,32 @@
+# Prometheus ansible role
+# based on https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
+# http://localhost:31000/#/alerts?silenced=false&inhibited=false&filter=%7Balertname%3D%22High%20Pod%20Meory%22%7D
+---
+
+- name: Create namespace
+  cmd: /usr/bin/kubectl create namespace {{ prometheus_namespace }}
+  delegate_to: {{ k8s_master_ip }}
+  register: prometheus_namespace_result
+- debug:
+    msg: "{{ prometheus_namespace_result }}"
+
+- name: Create cluster role
+  cmd: kubectl create -f files/clusterRole.yml
+  delegate_to: {{ k8s_master_ip }}
+  register: prometheus_clusterrole_result
+- debug:
+    msg: "{{ prometheus_clusterrole_result }}"
+
+- name: Create config map
+  cmd: kubectl create -f files/config-map.yml -n {{ prometheus_namespace }}
+  delegate_to: {{ k8s_master_ip }}
+  register: prometheus_configmap_result
+- debug:
+  msg: "{{ prometheus_configmap_result }}"
+
+- name: Create prometheus deployment
+  cmd: kubectl create -f files/deployment.yml -n {{ prometheus_namespace }}
+  delegate_to: {{ k8s_master_ip }}
+  register: prometheus_deployment_result
+- debug:
+  msg: "{{ prometheus_deployment_result }}"

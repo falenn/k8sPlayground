@@ -6,14 +6,14 @@
 - name: Reset kubeadm before init in case this is not the first run
   command: kubeadm reset -f
   when: kubeadm_reset_before_init
-  tags: 
+  tags:
    - node-install
 
 - name: disable Swap
   command: "swapoff -a"
   tags:
    - node-install
- 
+
 # Generate join token
 - name: Generate join token
   shell: /usr/bin/kubeadm token create --ttl 10m
@@ -21,7 +21,7 @@
   delegate_to: "{{ k8s_master_ip }}"
   tags:
    - node-token
-  
+
 - set_fact:
    k8s_token: "{{ k8s_join_token.stdout }}"
   tags:
@@ -39,6 +39,7 @@
     /usr/bin/kubeadm \
       join \
       {{ k8s_master_ip }}:{{ k8s_master_port }} \
+      --fail-swap-on=false \
       --token={{ k8s_token }} \
       --discovery-token-unsafe-skip-ca-verification
   args:
@@ -50,7 +51,7 @@
 - debug:
     msg: "{{ install_node_result }}"
   when: install_node_result is defined
-  tags: 
+  tags:
    - node-install
 
 - name: Delete k8s token
@@ -66,5 +67,5 @@
 - debug:
     msg: "{{ delete_token_result }}"
   when: delete_token_result is defined
-  tags: 
+  tags:
    - node-install

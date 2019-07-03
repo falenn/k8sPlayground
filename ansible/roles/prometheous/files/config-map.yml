@@ -10,13 +10,24 @@ data:
     groups:
     - name: devopscube demo alert
       rules:
-      - alert: High Pod Meory
-        expr: sum(container_memory_usage_bytes) > 1
-        for: 1m
+      # Compute node not reachable for > 5 minutes
+      - alert: InstanceDown
+        expr: up == 0
+        for: 5m
         labels:
           severity: slack
         annotations:
-          summary: High Memory Usage
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+      # high memory for a pod over 2 GB
+      - alert: High Pod Memory
+        expr: container_memory_usage_bytes:mean5m{job!="cadvisor"} > 2000000000
+        for: 15m
+        labels:
+          severity: slack
+        annotations:
+          summary: "High Memory Usage for {{ $labels.job }}"
+          description: "{{ $labels.instance of job {{ $labels.job }} show memory usage greater than 2 GB over 15 minutes."
   prometheus.yml: |-
     global:
       scrape_interval: 5s

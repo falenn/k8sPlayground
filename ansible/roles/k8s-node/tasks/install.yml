@@ -4,7 +4,7 @@
 #   service_facts:
 # - debug: var=ansible_facts.services['kubelet']
 - name: Reset kubeadm before init in case this is not the first run
-  command: kubeadm reset -f
+  command: /usr/bin/kubeadm reset -f
   when: kubeadm_reset_before_init
   tags:
    - node-install

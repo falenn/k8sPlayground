@@ -10,7 +10,6 @@
 
 - name: kubeadm init
   command: "kubeadm init \
-   --fail-swap-on=false \
    --ignore-preflight-errors={{ preflight_errors | quote }} \
    --pod-network-cidr={{ k8s_kubelet_service_cidr }}"
   register: kubeadm_init_result

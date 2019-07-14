@@ -1,5 +1,6 @@
 # main.yml - docker install
 ---
+# Add docker repo
 - name: Add Docker yum_repository
   yum_repository:
     name: docker-ce-stable-$basearch
@@ -9,6 +10,9 @@
     enabled: yes
     gpgcheck: yes
     gpgkey: https://download.docker.com/linux/centos/gpg
+  tags: [ docker-install, yum-repo ]
+
+
 
 - name: Install base packages
   yum:
@@ -18,11 +22,20 @@
     packages:
       - "{{ docker_version }}"
     register: docker_yum_install
-
+  tags: [ docker-install, yum-install ]
 
 # turn swapoff before trying to start docker
 - name: turn swap off
   command: "/usr/sbin/swapoff -a"
+  tags:
+   - docker-install
+
+# Create /etc/docker
+- name: Creates etc-docker
+  file:  
+    path: /etc/docker
+    state: directory
+  tags: [ docker-install, docker-daemon-file ]
 
 # Will always run and overwrite any existing config
 - name: Hydrate /etc/docker/daemon.json
@@ -34,10 +47,13 @@
     mode: 0640
   register: docker_daemon_json
   notify: start_docker_handler
+  tags: [ docker-install, docker-daemon-file ]
 - debug: var=docker_daemon_json
-
+  
 - name: enable service docker-ce and ensure it is not masked
   systemd:
     name: docker
     enabled: yes
     masked: no
+  tags:
+   - docker-install

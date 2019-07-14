@@ -14,6 +14,12 @@
   tags:
    - node-install
 
+# Stop the kubelet.  The Kubeadm cmd to follow will start the kubelet
+- name: Stop kubelet
+  service:
+    name: kubelet
+    state: stopped
+
 # Generate join token
 - name: Generate join token
   shell: /usr/bin/kubeadm token create --ttl 10m
@@ -39,7 +45,6 @@
     /usr/bin/kubeadm \
       join \
       {{ k8s_master_ip }}:{{ k8s_master_port }} \
-      --fail-swap-on=false \
       --token={{ k8s_token }} \
       --discovery-token-unsafe-skip-ca-verification
   args:
@@ -69,3 +74,8 @@
   when: delete_token_result is defined
   tags:
    - node-install
+
+- name: Enable Kubelet Service
+  service:
+    name: kubelet
+    enabled: yes

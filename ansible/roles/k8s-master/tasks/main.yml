@@ -22,6 +22,30 @@
     delay: 10
     timeout: 300
 
+- name: create kube dir
+  file:
+    path: /etc/kubernetes
+    state: directory
+    owner: "root"
+    group: "root"
+    force: yes
+    mode: 0700
+
+- name: copy config file to root/.kube dir
+  copy:
+    dest: /etc/kubernetes/admin.conf
+    src: /root/.kube/config
+    remote_src: yes
+    owner: root
+    group: root
+    force: yes
+    mode: 0400
+
+- name: taint master node
+  command: "kubectl \
+  --kubeconfig /etc/kubernetes/admin.conf \
+  taint nodes --all node-role.kubernetes.io/master-"
+
 - name: allow permissive RBAC rules
   command: "kubectl \
   --kubeconfig /etc/kubernetes/admin.conf create clusterrolebinding \
@@ -31,27 +55,7 @@
   --user=kubelet \
   --group=system:serviceaccounts"
 
-- name: taint master node
-  command: kubectl --kubeconfig /etc/kubernetes/admin.conf taint nodes --all node-role.kubernetes.io/master-
 
-- name: create kube dir
-  file:
-    path: /root/.kube
-    state: directory
-    owner: "{{ ansible_remote_user }}"
-    group: "{{ ansible_remote_user }}"
-    force: yes
-    mode: 0700
-
-- name: copy config file to root/.kube dir
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: /root/.kube/config
-    remote_src: yes
-    owner: root
-    group: root
-    force: yes
-    mode: 0400
 
 #- pause:
 #    minutes: 1

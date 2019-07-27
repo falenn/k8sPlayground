@@ -9,3 +9,5 @@ tmp/**
 facts
 */*.*.swp
 id_rsa*
+
+inventory.txt

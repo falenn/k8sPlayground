@@ -1,0 +1,24 @@
+# install-python27
+---
+ # python requires epel yum repo installed
+ - name: Install base python 2.7 packages
+   yum:
+     name: "{{ packages }}"
+     state: latest
+   vars:
+     packages:
+      - python-2.7*
+      - python2-pip*
+   register: python_27_install
+   tags:
+    - install-python27
+    - install-common
+ - debug: var=python_27_install
+
+ - name: Upgrade pip
+   pip: name=pip state=latest
+   tags:
+    - packages
+    - install-python27
+    - install-common
+   when: python_27_install

@@ -1,0 +1,24 @@
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: busybox1
+  labels:
+    app: busybox1
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+    volumeMounts:
+      - name: storage
+        mountPath: /storage
+  restartPolicy: Always
+  volumes:
+    - name: storage
+      persistentVolumeClaim:
+        claimName: testvol-pv
+  nodeName: sut156.atlpss.hp.net

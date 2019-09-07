@@ -10,24 +10,36 @@ spec:
       labels:
         app: prometheus-server
     spec:
+      initContainers:
+        - name: init-prometheus-storage
+          image: busybox:latest
+          # command: ['sh','-c','touch /data/test.txt']
+          command: ['sh','-c','/bin/mkdir -p /data/prometheus; /bin/chown nobody:nogroup -R /data/prometheus; /bin/chmod ug+xwr -R /data/prometheus;']
+          volumeMounts:
+            - name: prometheus-storage-volume
+              mountPath: /data/
       containers:
         - name: prometheus
           image: prom/prometheus:v2.1.0
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
-            - "--storage.tsdb.path=/prometheus/"
+            - "--storage.tsdb.path=/data/prometheus/"
           ports:
             - containerPort: 9090
           volumeMounts:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/
             - name: prometheus-storage-volume
-              mountPath: /prometheus/
+              mountPath: /data/
+      restartPolicy: Always
       volumes:
         - name: prometheus-config-volume
           configMap:
             defaultMode: 420
             name: prometheus-server-conf
-  
+      #  - name: prometheus-storage-volume
+      #    emptyDir: {}
         - name: prometheus-storage-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: prometheus-pv
+

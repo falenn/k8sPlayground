@@ -1,2 +1,2 @@
 # Vars for prometheus
-prometheus_namespace: monitoring
+prometheus_namespace: "monitoring"

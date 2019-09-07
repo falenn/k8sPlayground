@@ -2,31 +2,67 @@
 # based on https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
 # http://localhost:31000/#/alerts?silenced=false&inhibited=false&filter=%7Balertname%3D%22High%20Pod%20Meory%22%7D
 ---
+- name: Create k8s/prom temp
+  file: 
+    path: "{{ remote_tmp_dir }}/k8s/p8s"
+    state: directory 
+  delegate_to: "{{ k8s_master_ip }}"
 
 - name: Create namespace
-  cmd: /usr/bin/kubectl create namespace {{ prometheus_namespace }}
-  delegate_to: {{ k8s_master_ip }}
+  command: "/usr/bin/kubectl create namespace {{ prometheus_namespace }}"
+  delegate_to: "{{ k8s_master_ip }}"
   register: prometheus_namespace_result
+  ignore_errors: true
 - debug:
     msg: "{{ prometheus_namespace_result }}"
 
+- name: Copy prometheus yaml
+  copy: 
+    src: .
+    dest: "{{ remote_tmp_dir }}/k8s/p8s"
+  register: prom_copy_clusterRole
+  ignore_errors: true  
+ 
 - name: Create cluster role
-  cmd: kubectl create -f files/clusterRole.yml
-  delegate_to: {{ k8s_master_ip }}
+  command: "kubectl create -f {{ remote_tmp_dir }}/k8s/p8s/clusterRole.yml"
+  delegate_to: "{{ k8s_master_ip }}"
   register: prometheus_clusterrole_result
+  when: prom_copy_clusterRole
+  ignore_errors: true 
 - debug:
     msg: "{{ prometheus_clusterrole_result }}"
 
+- name: Copy config map
+  copy:
+    src: config-map.yml
+    dest: "{{ remote_tmp_dir }}/k8s/p8s/config-map.yml"
+  register: prometheus_copy_configmap
+  ignore_errors: true
+
 - name: Create config map
-  cmd: kubectl create -f files/config-map.yml -n {{ prometheus_namespace }}
-  delegate_to: {{ k8s_master_ip }}
+  command: "kubectl create -f {{ remote_tmp_dir }}/k8s/p8s/config-map.yml -n {{ prometheus_namespace }}"
+  delegate_to: "{{ k8s_master_ip }}"
   register: prometheus_configmap_result
+  ignore_errors: true
 - debug:
-  msg: "{{ prometheus_configmap_result }}"
+    msg: "{{ prometheus_configmap_result }}"
+
+- name: Copy prometheus deployment
+  copy:
+    src: deployment.yml
+    dest: "{{ remote_tmp_dir }}/k8s/p8s/deployment.yml"
+  register: prometheus_copy_deployment
+  ignore_errors: true
+
+- name: Create PVC
+  command: "kubectl create -f {{ remote_tmp_dir }}/k8s/p8s/pvc-prometheus.yml -n {{ prometheus_namespace }}"
+  delegate_to: "{{ k8s_master_ip }}"
+  register: prometheus_pvc_result
+  ignore_errors: true
 
 - name: Create prometheus deployment
-  cmd: kubectl create -f files/deployment.yml -n {{ prometheus_namespace }}
-  delegate_to: {{ k8s_master_ip }}
+  command: "kubectl create -f {{ remote_tmp_dir }}/k8s/p8s/deployment.yml -n {{ prometheus_namespace }}"
+  delegate_to: "{{ k8s_master_ip }}"
   register: prometheus_deployment_result
 - debug:
-  msg: "{{ prometheus_deployment_result }}"
+    msg: "{{ prometheus_deployment_result }}"

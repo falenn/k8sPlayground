@@ -1,11 +1,13 @@
 # K8s Install
-To run,
+NOTE: This does require Docker presidence on an installer node (perhaps the master) to run Ansible from Docker.
 
-This does require kubeadm install presidence.  That sucks.
 ansible-playbook k8s-install.yml 
 
-I actually want to make sure kubeadm is installed, then run the token generate on the
-master and store that value in a variable that I use later.
+# Vars Help
+Check vars collected for a given host from /group_vars/all
+ansible-inventory -i inventory.txt --host <hostname or IP>
+  or
+ansible -u root -i inventory.txt -m setup <hostname or IP>
 
 # Help / References
 Help from https://github.com/magic7s/ansible-kubeadm-contiv

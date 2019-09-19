@@ -16,9 +16,14 @@ spec:
     volumeMounts:
       - name: storage
         mountPath: /storage
+      - name: storage1
+        mountPath: /storage1
   restartPolicy: Always
   volumes:
     - name: storage
       persistentVolumeClaim:
         claimName: testvol-pv
+    - name: storage1
+      persistentVolumeClaim:
+        claimName: testvol1-pv
   nodeName: sut156.atlpss.hp.net

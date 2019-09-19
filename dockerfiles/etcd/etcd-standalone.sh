@@ -4,6 +4,8 @@
 #
 #
 install=$1
+image=quay.io/coreos/etcd
+label=v2.2.0
 
 export HostIP=`hostname -i`
 echo "HostIP: $HostIP"
@@ -21,7 +23,7 @@ sudo docker run -d \
 -p 5001:3001 \
 -p 3380:3380 \
 -p 3379:3379 \
---name etcd0 quay.io/coreos/etcd:v2.2.0 \
+--name etcd0 $image:$label \
 -name etcd0 \
 -advertise-client-urls http://${HostIP}:3379,http://${HostIP}:5001 \
 -listen-client-urls http://0.0.0.0:3379,http://0.0.0.0:5001 \

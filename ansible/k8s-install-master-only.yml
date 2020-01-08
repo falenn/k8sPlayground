@@ -21,13 +21,3 @@
     - k8s-master
     - flannel
 
-
-- name: Install K8s Nodes
-  hosts: node
-  remote_user: "{{ ansible_remote_user }}"
-  gather_facts: True
-  become: yes
-  become_method: sudo
-  connection: ssh
-  roles:
-    - k8s-node

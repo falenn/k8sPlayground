@@ -1,5 +1,5 @@
-# k8s/tasks/main.yml
 ---
-# Install the multus CNI binary
- - name: Install k8s
+# roles/k8s/tasks/main.yml
+ - name: Install k8s binaries
    import_tasks: install.yml
+

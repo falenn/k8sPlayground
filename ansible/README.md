@@ -39,3 +39,27 @@ Create a storage class so that we can attach to it.
 
 kubectl create -f storageclass.yaml
 
+## Add Helm Install
+for Centos, 
+```
+curl https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz --output helm-v3.0.2-linux-amd64.tar.gz
+curl https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz.sha256 --output helm-v3.0.2-linux-amd64.tar.gz.sha256
+echo `sha256sum helm-v3.0.2-linux-amd64.tar.gz` >> helm-sha256
+# check the sha
+diff helm-sha256 helm-v3.0.2-linux-amd64.tar.gz.sha256
+# unpack
+tar -xvf -zxvf helm-v3.0.0-linux-amd64.tar.gz
+
+Remember, when running helm init, it uses kubectl.  Kubectl must work from the location that you are installing helm from AND you must have cluster admin rights.
+
+
+mkidr ~/bin
+ln -s <helm binary location> ~/bin/helm
+
+# to add helm bash auto-complete
+yum install bash-completion bash-completion-extras
+
+
+```
+
+

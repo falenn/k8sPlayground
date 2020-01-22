@@ -48,9 +48,10 @@ echo `sha256sum helm-v3.0.2-linux-amd64.tar.gz` >> helm-sha256
 # check the sha
 diff helm-sha256 helm-v3.0.2-linux-amd64.tar.gz.sha256
 # unpack
-tar -xvf -zxvf helm-v3.0.0-linux-amd64.tar.gz
+mkdir helm
+tar -xvf -C helm helm-v3.0.0-linux-amd64.tar.gz
 
-Remember, when running helm init, it uses kubectl.  Kubectl must work from the location that you are installing helm from AND you must have cluster admin rights.
+#Remember, when running helm init, it uses kubectl.  Kubectl must work from the location that you are installing helm from AND you must #have cluster admin rights.
 
 
 mkidr ~/bin

@@ -53,14 +53,32 @@ tar -xvf -C helm helm-v3.0.0-linux-amd64.tar.gz
 
 #Remember, when running helm init, it uses kubectl.  Kubectl must work from the location that you are installing helm from AND you must #have cluster admin rights.
 
-
 mkidr ~/bin
 ln -s <helm binary location> ~/bin/helm
 
 # to add helm bash auto-complete
 yum install bash-completion bash-completion-extras
-
-
 ```
+
+## About Helm
+local helm repo stored at ~/.helm/repository
+
+### Create your own chart
+```
+mkdir helmcharts
+cd helmcharts
+helm create examplechart
+cd examplechart
+ls
+cat Chart.yaml
+```
+
+We can download charts and / or put them in the local index. 
+We can also add private repos / charts.
+
+### Create private repo
+Can use private repos - S3, Github, etc.
+
+
 
 

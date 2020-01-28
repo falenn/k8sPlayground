@@ -14,6 +14,8 @@ Help from https://github.com/magic7s/ansible-kubeadm-contiv
 
 https://medium.com/@perwagnernielsen/ansible-tutorial-part-2-installing-packages-41d3ab28337d
 
+# Other Centos Guides
+https://phoenixnap.com/kb/how-to-install-kubernetes-on-centos
 
 # Items to fix
 ## flannel install

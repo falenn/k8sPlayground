@@ -21,3 +21,7 @@ sudo cat /etc/redhat-release
 sudo yum remove docker-ce containerd.io kubelet kubeadm kubectl -y
 sudo yum update -y
 
+
+https://rpmfind.net/linux/centos/7.7.1908/os/x86_64/Packages/policycoreutils-2.5-33.el7.x86_64.rpm
+https://rpmfind.net/linux/centos/7.7.1908/os/x86_64/Packages/selinux-policy-minimum-3.13.1-252.el7.noarch.rpm
+https://rpmfind.net/linux/centos/7.7.1908/os/x86_64/Packages/selinux-policy-3.13.1-252.el7.noarch.rpm

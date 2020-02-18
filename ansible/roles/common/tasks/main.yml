@@ -1,18 +1,6 @@
-# main
----
- # python requires epel yum repo installed
- - name: Install base packages
-   yum:
-     name: "{{ packages }}"
-     state: latest
-   vars:
-     packages:
-      - python-2.7*
-      - python-pip
-   register: common_yum_install
- - debug: var=common_yum_install
+# common/tasks/main.yml
+ - name: Install Repos
+   import_tasks: repos.yml
 
- - name: Upgrade pip
-   pip: name=pip state=latest
-   tags:
-    - packages
+ - name: Install Python
+   import_tasks: install-python27.yml 

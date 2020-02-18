@@ -1,0 +1,36 @@
+---
+- name: Add Epel YUM Repo
+  yum_repository:
+    name: epel
+    file: epel
+    description: Extra Packages For Enterprise Linux 7 - $basearch
+    metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-7&arh=$basearch
+    failovermethod: priority
+    gpgcheck: no
+    enabled: yes
+    gpgkey: https://getfedora.org/static/fedora.gpg
+  tags: [ install-common, yum-repo ]
+
+- name: Add Epel debuginfo YUM Repo 
+  yum_repository:
+    name: epel-debuginfo
+    file: epel
+    description: Extra Packages For Enterprise Linux 7 - $basearch - debug
+    metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-debug-7&arh=$basearch
+    failovermethod: priority
+    gpgcheck: yes
+    enabled: no
+    gpgkey: https://getfedora.org/static/fedora.gpg
+  tags: [ install-common, yum-repo ]
+
+- name: Add Epel sources YUM Repo
+  yum_repository:
+    name: epel-sources
+    file: epel
+    description: Extra Packages For Enterprise Linux 7 - $basearch - sources
+    metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-sources-7&arh=$basearch
+    failovermethod: priority
+    gpgcheck: yes
+    enabled: no
+    gpgkey: https://getfedora.org/static/fedora.gpg
+  tags: [ install-common, yum-repo ]

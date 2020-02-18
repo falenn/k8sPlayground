@@ -11,22 +11,18 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 # Nodes that have docker installed on them
 [docker]
-c2
-c3
+10.10.0.156
+10.10.0.157
 
 [k8s]
-c2
-c3
+10.10.0.156
+10.10.0.157
 
 # Master k8s nodes
 [master]
-c2 ansible_ssh_host=c2
+10.10.0.156 ansible_ssh_host=10.10.0.156
 
 # Nodes, other than master in the k8s cluster
 [node]
-c3
+10.10.0.157
 
-# Nodes with IB interfaces for SR-IOV
-[k8s-cni-multus-sriov]
-c2
-c3

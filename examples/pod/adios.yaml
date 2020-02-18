@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: adios
+  labels:
+    app: adios
+spec:
+  containers:
+  - image: ornladios/adios2-auto:el7-gnu8-openmpi-ohpc
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: adios
+  restartPolicy: Always

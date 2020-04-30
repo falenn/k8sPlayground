@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multitool
+  labels:
+    app: multitool
+spec:
+  containers:
+  - image: praqma/network-multitool
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: multitool
+  restartPolicy: Always

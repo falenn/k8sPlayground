@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: numa-cpu1
+  namespace: default
+spec:
+  containers:
+  - name: numa-nginx
+    image: nginx
+    resources:
+      limits:
+        cpu: "1"
+        memory: "200Mi"
+      requests:
+        cpu: "1"
+        memory: "200Mi"

@@ -25,6 +25,7 @@ spec:
   requiredDropCapabilities:
   - ALL
   volumes:
+  - 'hostPath'
   - 'configMap'
   - 'emptyDir'
   - 'projected'
@@ -72,9 +73,6 @@ metadata:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: bgpconfigurations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -209,9 +207,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: bgppeers.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -246,6 +241,7 @@ spec:
                 format: int32
                 type: integer
               keepOriginalNextHop:
+                default: false
                 description: Option to keep the original nexthop field when routes
                   are sent to a BGP Peer. Setting "true" configures the selected BGP
                   Peers node to use the "next hop keep;" instead of "next hop self;"(default)
@@ -253,8 +249,8 @@ spec:
                 type: boolean
               node:
                 description: The node name identifying the Calico node instance that
-                  is peering with this peer. If this is not set, this represents a
-                  global peer, i.e. a peer that peers with every node in the deployment.
+                  is targeted by this peer. If this is not set, and no nodeSelector
+                  is specified, then this BGP peer selects all nodes in the cluster.
                 type: string
               nodeSelector:
                 description: Selector for the nodes that should have this peering.  When
@@ -296,12 +292,9 @@ spec:
                   peering between the local node and selected remote nodes, we configure
                   an IPv4 peering if both ends have NodeBGPSpec.IPv4Address specified,
                   and an IPv6 peering if both ends have NodeBGPSpec.IPv6Address specified.  The
-                  remote AS number comes from the remote node’s NodeBGPSpec.ASNumber,
+                  remote AS number comes from the remote node's NodeBGPSpec.ASNumber,
                   or the global default if that is not set.
                 type: string
-            required:
-            - asNumber
-            - peerIP
             type: object
         type: object
     served: true
@@ -320,9 +313,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: blockaffinities.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -387,9 +377,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: clusterinformations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -457,9 +444,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: felixconfigurations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -518,13 +502,13 @@ spec:
                   true]'
                 type: boolean
               bpfDataIfacePattern:
-                description: 'BPFDataIfacePattern is a regular expression that controls
+                description: BPFDataIfacePattern is a regular expression that controls
                   which interfaces Felix should attach BPF programs to in order to
                   catch traffic to/from the network.  This needs to match the interfaces
                   that Calico workload traffic flows over as well as any interfaces
                   that handle incoming traffic to nodeports and services from outside
                   the cluster.  It should not match the workload interfaces (usually
-                  named cali...). [Default: ^(en.*|eth.*|tunl0$)]'
+                  named cali...).
                 type: string
               bpfDisableUnprivileged:
                 description: 'BPFDisableUnprivileged, if enabled, Felix sets the kernel.unprivileged_bpf_disabled
@@ -569,10 +553,10 @@ spec:
                   `tc exec bpf debug`. [Default: Off].'
                 type: string
               chainInsertMode:
-                description: 'ChainInsertMode controls whether Felix hooks the kernel’s
+                description: 'ChainInsertMode controls whether Felix hooks the kernel''s
                   top-level iptables chains by inserting a rule at the top of the
                   chain or by appending a rule at the bottom. insert is the safe default
-                  since it prevents Calico’s rules from being bypassed. If you switch
+                  since it prevents Calico''s rules from being bypassed. If you switch
                   to append mode, be sure that the other rules in the chains signal
                   acceptance by falling through to the Calico rules, otherwise the
                   Calico policy will be bypassed. [Default: insert]'
@@ -654,7 +638,7 @@ spec:
                   Each port should be specified as tcp:<port-number> or udp:<port-number>.
                   For back-compatibility, if the protocol is not specified, it defaults
                   to “tcp”. To disable all outbound host ports, use the value none.
-                  The default value opens etcd’s standard ports to ensure that Felix
+                  The default value opens etcd''s standard ports to ensure that Felix
                   does not get cut off from etcd as well as allowing DHCP and DNS.
                   [Default: tcp:179, tcp:2379, tcp:2380, tcp:6443, tcp:6666, tcp:6667,
                   udp:53, udp:67]'
@@ -706,8 +690,8 @@ spec:
                   workload endpoints and so distinguishes them from host endpoint
                   interfaces. Note: in environments other than bare metal, the orchestrators
                   configure this appropriately. For example our Kubernetes and Docker
-                  integrations set the ‘cali’ value, and our OpenStack integration
-                  sets the ‘tap’ value. [Default: cali]'
+                  integrations set the ''cali'' value, and our OpenStack integration
+                  sets the ''tap'' value. [Default: cali]'
                 type: string
               interfaceRefreshInterval:
                 description: InterfaceRefreshInterval is the period at which Felix
@@ -723,7 +707,7 @@ spec:
               ipsetsRefreshInterval:
                 description: 'IpsetsRefreshInterval is the period at which Felix re-checks
                   all iptables state to ensure that no other process has accidentally
-                  broken Calico’s rules. Set to 0 to disable iptables refresh. [Default:
+                  broken Calico''s rules. Set to 0 to disable iptables refresh. [Default:
                   90s]'
                 type: string
               iptablesBackend:
@@ -735,7 +719,7 @@ spec:
               iptablesLockFilePath:
                 description: 'IptablesLockFilePath is the location of the iptables
                   lock file. You may need to change this if the lock file is not in
-                  its standard location (for example if you have mapped it into Felix’s
+                  its standard location (for example if you have mapped it into Felix''s
                   container at a different path). [Default: /run/xtables.lock]'
                 type: string
               iptablesLockProbeInterval:
@@ -767,16 +751,16 @@ spec:
                 description: 'IptablesPostWriteCheckInterval is the period after Felix
                   has done a write to the dataplane that it schedules an extra read
                   back in order to check the write was not clobbered by another process.
-                  This should only occur if another application on the system doesn’t
+                  This should only occur if another application on the system doesn''t
                   respect the iptables lock. [Default: 1s]'
                 type: string
               iptablesRefreshInterval:
                 description: 'IptablesRefreshInterval is the period at which Felix
                   re-checks the IP sets in the dataplane to ensure that no other process
-                  has accidentally broken Calico’s rules. Set to 0 to disable IP sets
-                  refresh. Note: the default for this value is lower than the other
-                  refresh intervals as a workaround for a Linux kernel bug that was
-                  fixed in kernel version 4.11. If you are using v4.11 or greater
+                  has accidentally broken Calico''s rules. Set to 0 to disable IP
+                  sets refresh. Note: the default for this value is lower than the
+                  other refresh intervals as a workaround for a Linux kernel bug that
+                  was fixed in kernel version 4.11. If you are using v4.11 or greater
                   you may want to set this to, a higher value to reduce Felix CPU
                   usage. [Default: 10s]'
                 type: string
@@ -827,10 +811,15 @@ spec:
                 type: string
               metadataPort:
                 description: 'MetadataPort is the port of the metadata server. This,
-                  combined with global.MetadataAddr (if not ‘None’), is used to set
-                  up a NAT rule, from 169.254.169.254:80 to MetadataAddr:MetadataPort.
+                  combined with global.MetadataAddr (if not ''None''), is used to
+                  set up a NAT rule, from 169.254.169.254:80 to MetadataAddr:MetadataPort.
                   In most cases this should not need to be changed [Default: 8775].'
                 type: integer
+              mtuIfacePattern:
+                description: MTUIfacePattern is a regular expression that controls
+                  which interfaces Felix should scan in order to calculate the host's
+                  MTU. This should not match workload interfaces (usually named cali...).
+                type: string
               natOutgoingAddress:
                 description: NATOutgoingAddress specifies an address to use when performing
                   source NAT for traffic in a natOutgoing pool that is leaving the
@@ -901,9 +890,9 @@ spec:
                   status reports. [Default: 90s]'
                 type: string
               routeRefreshInterval:
-                description: 'RouterefreshInterval is the period at which Felix re-checks
+                description: 'RouteRefreshInterval is the period at which Felix re-checks
                   the routes in the dataplane to ensure that no other process has
-                  accidentally broken Calico’s rules. Set to 0 to disable route refresh.
+                  accidentally broken Calico''s rules. Set to 0 to disable route refresh.
                   [Default: 90s]'
                 type: string
               routeSource:
@@ -924,6 +913,13 @@ spec:
                 - max
                 - min
                 type: object
+              serviceLoopPrevention:
+                description: 'When service IP advertisement is enabled, prevent routing
+                  loops to service IPs that are not in use, by dropping or rejecting
+                  packets that do not get DNAT''d by kube-proxy. Unless set to "Disabled",
+                  in which case such routing loops continue to be allowed. [Default:
+                  Drop]'
+                type: string
               sidecarAccelerationEnabled:
                 description: 'SidecarAccelerationEnabled enables experimental sidecar
                   acceleration [Default: false]'
@@ -1003,9 +999,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: globalnetworkpolicies.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -1208,7 +1201,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -1237,7 +1230,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -1539,7 +1532,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -1568,7 +1561,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -1780,9 +1773,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: globalnetworksets.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -1839,9 +1829,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: hostendpoints.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -1953,9 +1940,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: ipamblocks.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2020,7 +2004,6 @@ spec:
             - allocations
             - attributes
             - cidr
-            - deleted
             - strictAffinity
             - unallocated
             type: object
@@ -2041,9 +2024,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: ipamconfigs.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2076,6 +2056,10 @@ spec:
             properties:
               autoAllocateBlocks:
                 type: boolean
+              maxBlocksPerHost:
+                description: MaxBlocksPerHost, if non-zero, is the max number of blocks
+                  that can be affine to each host.
+                type: integer
               strictAffinity:
                 type: boolean
             required:
@@ -2099,9 +2083,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: ipamhandles.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2136,6 +2117,8 @@ spec:
                 additionalProperties:
                   type: integer
                 type: object
+              deleted:
+                type: boolean
               handleID:
                 type: string
             required:
@@ -2159,9 +2142,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: ippools.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2264,9 +2244,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: kubecontrollersconfigurations.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2493,9 +2470,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: networkpolicies.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -2687,7 +2661,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -2716,7 +2690,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -3018,7 +2992,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -3047,7 +3021,7 @@ spec:
                         code:
                           description: Match on a specific ICMP code.  If specified,
                             the Type value must also be specified. This is a technical
-                            limitation imposed by the kernel’s iptables firewall,
+                            limitation imposed by the kernel's iptables firewall,
                             which Calico uses to enforce the rule.
                           type: integer
                         type:
@@ -3251,9 +3225,6 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  annotations:
-    controller-gen.kubebuilder.io/version: (devel)
-  creationTimestamp: null
   name: networksets.crd.projectcalico.org
 spec:
   group: crd.projectcalico.org
@@ -3306,6 +3277,8 @@ status:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.3.0
   name: installations.operator.tigera.io
 spec:
   group: operator.tigera.io
@@ -3327,12 +3300,12 @@ spec:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
               of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#resources'
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
             description: 'Kind is a string value representing the REST resource this
               object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds'
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -3409,8 +3382,9 @@ spec:
                       type: object
                     type: array
                   mtu:
-                    description: 'MTU specifies the maximum transmission unit to use
-                      on the pod network. Default: 1410'
+                    description: MTU specifies the maximum transmission unit to use
+                      on the pod network. If not specified, Calico will perform MTU
+                      auto-detection based on the cluster network.
                     format: int32
                     type: integer
                   multiInterfaceMode:
@@ -3432,6 +3406,12 @@ spec:
                           source address on the node is used to reach the specified
                           IP or domain.
                         type: string
+                      cidrs:
+                        description: CIDRS enables IP auto-detection based on which
+                          addresses on the nodes are within one of the provided CIDRs.
+                        items:
+                          type: string
+                        type: array
                       firstFound:
                         description: FirstFound uses default interface matching parameters
                           to select an interface, performing best-effort filtering
@@ -3456,6 +3436,12 @@ spec:
                           source address on the node is used to reach the specified
                           IP or domain.
                         type: string
+                      cidrs:
+                        description: CIDRS enables IP auto-detection based on which
+                          addresses on the nodes are within one of the provided CIDRs.
+                        items:
+                          type: string
+                        type: array
                       firstFound:
                         description: FirstFound uses default interface matching parameters
                           to select an interface, performing best-effort filtering
@@ -3474,17 +3460,44 @@ spec:
               cni:
                 description: CNI specifies the CNI that will be used by this installation.
                 properties:
+                  ipam:
+                    description: IPAM specifies the pod IP address management that
+                      will be used in the Calico or Calico Enterprise installation.
+                    properties:
+                      type:
+                        description: "Specifies the IPAM plugin that will be used
+                          in the Calico or Calico Enterprise installation. * For CNI
+                          Plugin Calico, this field defaults to Calico. * For CNI
+                          Plugin GKE, this field defaults to HostLocal. * For CNI
+                          Plugin AzureVNET, this field defaults to AzureVNET. * For
+                          CNI Plugin AmazonVPC, this field defaults to AmazonVPC.
+                          \n The IPAM plugin is installed and configured only if the
+                          CNI plugin is set to Calico, for all other values of the
+                          CNI plugin the plugin binaries and CNI config is a dependency
+                          that is expected to be installed separately. \n Default:
+                          Calico"
+                        enum:
+                        - Calico
+                        - HostLocal
+                        - AmazonVPC
+                        - AzureVNET
+                        type: string
+                    required:
+                    - type
+                    type: object
                   type:
                     description: "Specifies the CNI plugin that will be used in the
-                      Calico or Calico Enterprise installation. For KubernetesProvider
-                      GKE, this field defaults to GKE. For KubernetesProvider AKE,
-                      this field defaults to AzureVNET. For KubernetesProvider EKS,
-                      this field defaults to AmazonVPC. For all other KubernetesProviders
-                      this field defaults to Calico. For the value Calico, the CNI
-                      plugin binaries and CNI config will be installed as part of
-                      deployment, for all other values the CNI plugin binaries and
-                      CNI config is a dependency that is expected to be installed
-                      separately. \n Default: Calico"
+                      Calico or Calico Enterprise installation. * For KubernetesProvider
+                      GKE, this field defaults to GKE. * For KubernetesProvider AKS,
+                      this field defaults to AzureVNET. * For KubernetesProvider EKS,
+                      this field defaults to AmazonVPC. * If aws-node daemonset exists
+                      in kube-system when the Installation resource is created, this
+                      field defaults to AmazonVPC. * For all other cases this field
+                      defaults to Calico. \n For the value Calico, the CNI plugin
+                      binaries and CNI config will be installed as part of deployment,
+                      for all other values the CNI plugin binaries and CNI config
+                      is a dependency that is expected to be installed separately.
+                      \n Default: Calico"
                     enum:
                     - Calico
                     - GKE
@@ -3656,6 +3669,375 @@ spec:
             description: Most recently observed state for the Calico or Calico Enterprise
               installation.
             properties:
+              computed:
+                description: Computed is the final installation including overlaid
+                  resources.
+                properties:
+                  calicoNetwork:
+                    description: CalicoNetwork specifies networking configuration
+                      options for Calico.
+                    properties:
+                      bgp:
+                        description: BGP configures whether or not to enable Calico's
+                          BGP capabilities.
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                      containerIPForwarding:
+                        description: 'ContainerIPForwarding configures whether ip
+                          forwarding will be enabled for containers in the CNI configuration.
+                          Default: Disabled'
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                      hostPorts:
+                        description: 'HostPorts configures whether or not Calico will
+                          support Kubernetes HostPorts. Valid only when using the
+                          Calico CNI plugin. Default: Enabled'
+                        enum:
+                        - Enabled
+                        - Disabled
+                        type: string
+                      ipPools:
+                        description: IPPools contains a list of IP pools to create
+                          if none exist. At most one IP pool of each address family
+                          may be specified. If omitted, a single pool will be configured
+                          if needed.
+                        items:
+                          properties:
+                            blockSize:
+                              description: 'BlockSize specifies the CIDR prefex length
+                                to use when allocating per-node IP blocks from the
+                                main IP pool CIDR. Default: 26 (IPv4), 122 (IPv6)'
+                              format: int32
+                              type: integer
+                            cidr:
+                              description: CIDR contains the address range for the
+                                IP Pool in classless inter-domain routing format.
+                              type: string
+                            encapsulation:
+                              description: 'Encapsulation specifies the encapsulation
+                                type that will be used with the IP Pool. Default:
+                                IPIP'
+                              enum:
+                              - IPIPCrossSubnet
+                              - IPIP
+                              - VXLAN
+                              - VXLANCrossSubnet
+                              - None
+                              type: string
+                            natOutgoing:
+                              description: 'NATOutgoing specifies if NAT will be enabled
+                                or disabled for outgoing traffic. Default: Enabled'
+                              enum:
+                              - Enabled
+                              - Disabled
+                              type: string
+                            nodeSelector:
+                              description: 'NodeSelector specifies the node selector
+                                that will be set for the IP Pool. Default: ''all()'''
+                              type: string
+                          required:
+                          - cidr
+                          type: object
+                        type: array
+                      mtu:
+                        description: MTU specifies the maximum transmission unit to
+                          use on the pod network. If not specified, Calico will perform
+                          MTU auto-detection based on the cluster network.
+                        format: int32
+                        type: integer
+                      multiInterfaceMode:
+                        description: 'MultiInterfaceMode configures what will configure
+                          multiple interface per pod. Only valid for Calico Enterprise
+                          installations using the Calico CNI plugin. Default: None'
+                        enum:
+                        - None
+                        - Multus
+                        type: string
+                      nodeAddressAutodetectionV4:
+                        description: NodeAddressAutodetectionV4 specifies an approach
+                          to automatically detect node IPv4 addresses. If not specified,
+                          will use default auto-detection settings to acquire an IPv4
+                          address for each node.
+                        properties:
+                          canReach:
+                            description: CanReach enables IP auto-detection based
+                              on which source address on the node is used to reach
+                              the specified IP or domain.
+                            type: string
+                          cidrs:
+                            description: CIDRS enables IP auto-detection based on
+                              which addresses on the nodes are within one of the provided
+                              CIDRs.
+                            items:
+                              type: string
+                            type: array
+                          firstFound:
+                            description: FirstFound uses default interface matching
+                              parameters to select an interface, performing best-effort
+                              filtering based on well-known interface names.
+                            type: boolean
+                          interface:
+                            description: Interface enables IP auto-detection based
+                              on interfaces that match the given regex.
+                            type: string
+                          skipInterface:
+                            description: SkipInterface enables IP auto-detection based
+                              on interfaces that do not match the given regex.
+                            type: string
+                        type: object
+                      nodeAddressAutodetectionV6:
+                        description: NodeAddressAutodetectionV6 specifies an approach
+                          to automatically detect node IPv6 addresses. If not specified,
+                          IPv6 addresses will not be auto-detected.
+                        properties:
+                          canReach:
+                            description: CanReach enables IP auto-detection based
+                              on which source address on the node is used to reach
+                              the specified IP or domain.
+                            type: string
+                          cidrs:
+                            description: CIDRS enables IP auto-detection based on
+                              which addresses on the nodes are within one of the provided
+                              CIDRs.
+                            items:
+                              type: string
+                            type: array
+                          firstFound:
+                            description: FirstFound uses default interface matching
+                              parameters to select an interface, performing best-effort
+                              filtering based on well-known interface names.
+                            type: boolean
+                          interface:
+                            description: Interface enables IP auto-detection based
+                              on interfaces that match the given regex.
+                            type: string
+                          skipInterface:
+                            description: SkipInterface enables IP auto-detection based
+                              on interfaces that do not match the given regex.
+                            type: string
+                        type: object
+                    type: object
+                  cni:
+                    description: CNI specifies the CNI that will be used by this installation.
+                    properties:
+                      ipam:
+                        description: IPAM specifies the pod IP address management
+                          that will be used in the Calico or Calico Enterprise installation.
+                        properties:
+                          type:
+                            description: "Specifies the IPAM plugin that will be used
+                              in the Calico or Calico Enterprise installation. * For
+                              CNI Plugin Calico, this field defaults to Calico. *
+                              For CNI Plugin GKE, this field defaults to HostLocal.
+                              * For CNI Plugin AzureVNET, this field defaults to AzureVNET.
+                              * For CNI Plugin AmazonVPC, this field defaults to AmazonVPC.
+                              \n The IPAM plugin is installed and configured only
+                              if the CNI plugin is set to Calico, for all other values
+                              of the CNI plugin the plugin binaries and CNI config
+                              is a dependency that is expected to be installed separately.
+                              \n Default: Calico"
+                            enum:
+                            - Calico
+                            - HostLocal
+                            - AmazonVPC
+                            - AzureVNET
+                            type: string
+                        required:
+                        - type
+                        type: object
+                      type:
+                        description: "Specifies the CNI plugin that will be used in
+                          the Calico or Calico Enterprise installation. * For KubernetesProvider
+                          GKE, this field defaults to GKE. * For KubernetesProvider
+                          AKS, this field defaults to AzureVNET. * For KubernetesProvider
+                          EKS, this field defaults to AmazonVPC. * If aws-node daemonset
+                          exists in kube-system when the Installation resource is
+                          created, this field defaults to AmazonVPC. * For all other
+                          cases this field defaults to Calico. \n For the value Calico,
+                          the CNI plugin binaries and CNI config will be installed
+                          as part of deployment, for all other values the CNI plugin
+                          binaries and CNI config is a dependency that is expected
+                          to be installed separately. \n Default: Calico"
+                        enum:
+                        - Calico
+                        - GKE
+                        - AmazonVPC
+                        - AzureVNET
+                        type: string
+                    required:
+                    - type
+                    type: object
+                  componentResources:
+                    description: ComponentResources can be used to customize the resource
+                      requirements for each component.
+                    items:
+                      description: The ComponentResource struct associates a ResourceRequirements
+                        with a component by name
+                      properties:
+                        componentName:
+                          description: ComponentName is an enum which identifies the
+                            component
+                          enum:
+                          - Node
+                          - Typha
+                          - KubeControllers
+                          type: string
+                        resourceRequirements:
+                          description: ResourceRequirements allows customization of
+                            limits and requests for compute resources such as cpu
+                            and memory.
+                          properties:
+                            limits:
+                              additionalProperties:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              description: 'Limits describes the maximum amount of
+                                compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                              type: object
+                            requests:
+                              additionalProperties:
+                                anyOf:
+                                - type: integer
+                                - type: string
+                                pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                                x-kubernetes-int-or-string: true
+                              description: 'Requests describes the minimum amount
+                                of compute resources required. If Requests is omitted
+                                for a container, it defaults to Limits if that is
+                                explicitly specified, otherwise to an implementation-defined
+                                value. More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/'
+                              type: object
+                          type: object
+                      required:
+                      - componentName
+                      - resourceRequirements
+                      type: object
+                    type: array
+                  controlPlaneNodeSelector:
+                    additionalProperties:
+                      type: string
+                    description: ControlPlaneNodeSelector is used to select control
+                      plane nodes on which to run specific Calico components. This
+                      currently only applies to kube-controllers and the apiserver.
+                    type: object
+                  flexVolumePath:
+                    description: FlexVolumePath optionally specifies a custom path
+                      for FlexVolume. If not specified, FlexVolume will be enabled
+                      by default. If set to 'None', FlexVolume will be disabled. The
+                      default is based on the kubernetesProvider.
+                    type: string
+                  imagePath:
+                    description: "ImagePath allows for the path part of an image to
+                      be specified. If specified then the specified value will be
+                      used as the image path for each image. If not specified or empty,
+                      the default for each image will be used. \n Image format:    `<registry>/<imagePath>/<imageName>:<image-tag>`
+                      \n This option allows configuring the `<imagePath>` portion
+                      of the above format."
+                    type: string
+                  imagePullSecrets:
+                    description: ImagePullSecrets is an array of references to container
+                      registry pull secrets to use. These are applied to all images
+                      to be pulled.
+                    items:
+                      description: LocalObjectReference contains enough information
+                        to let you locate the referenced object inside the same namespace.
+                      properties:
+                        name:
+                          description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            TODO: Add other useful fields. apiVersion, kind, uid?'
+                          type: string
+                      type: object
+                    type: array
+                  kubernetesProvider:
+                    description: KubernetesProvider specifies a particular provider
+                      of the Kubernetes platform and enables provider-specific configuration.
+                      If the specified value is empty, the Operator will attempt to
+                      automatically determine the current provider. If the specified
+                      value is not empty, the Operator will still attempt auto-detection,
+                      but will additionally compare the auto-detected value to the
+                      specified value to confirm they match.
+                    enum:
+                    - ""
+                    - EKS
+                    - GKE
+                    - AKS
+                    - OpenShift
+                    - DockerEnterprise
+                    type: string
+                  nodeMetricsPort:
+                    description: NodeMetricsPort specifies which port calico/node
+                      serves prometheus metrics on. By default, metrics are not enabled.
+                      If specified, this overrides any FelixConfiguration resources
+                      which may exist. If omitted, then prometheus metrics may still
+                      be configured through FelixConfiguration.
+                    format: int32
+                    type: integer
+                  nodeUpdateStrategy:
+                    description: NodeUpdateStrategy can be used to customize the desired
+                      update strategy, such as the MaxUnavailable field.
+                    properties:
+                      rollingUpdate:
+                        description: 'Rolling update config params. Present only if
+                          type = "RollingUpdate". --- TODO: Update this to follow
+                          our convention for oneOf, whatever we decide it to be. Same
+                          as Deployment `strategy.rollingUpdate`. See https://github.com/kubernetes/kubernetes/issues/35345'
+                        properties:
+                          maxUnavailable:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            description: 'The maximum number of DaemonSet pods that
+                              can be unavailable during the update. Value can be an
+                              absolute number (ex: 5) or a percentage of total number
+                              of DaemonSet pods at the start of the update (ex: 10%).
+                              Absolute number is calculated from percentage by rounding
+                              up. This cannot be 0. Default value is 1. Example: when
+                              this is set to 30%, at most 30% of the total number
+                              of nodes that should be running the daemon pod (i.e.
+                              status.desiredNumberScheduled) can have their pods stopped
+                              for an update at any given time. The update starts by
+                              stopping at most 30% of those DaemonSet pods and then
+                              brings up new DaemonSet pods in their place. Once the
+                              new pods are available, it then proceeds onto other
+                              DaemonSet pods, thus ensuring that at least 70% of original
+                              number of DaemonSet pods are available at all times
+                              during the update.'
+                            x-kubernetes-int-or-string: true
+                        type: object
+                      type:
+                        description: Type of daemon set update. Can be "RollingUpdate"
+                          or "OnDelete". Default is RollingUpdate.
+                        type: string
+                    type: object
+                  registry:
+                    description: "Registry is the default Docker registry used for
+                      component Docker images. If specified, all images will be pulled
+                      from this registry. If not specified then the default registries
+                      will be used. \n Image format:    `<registry>/<imagePath>/<imageName>:<image-tag>`
+                      \n This option allows configuring the `<registry>` portion of
+                      the above format."
+                    type: string
+                  variant:
+                    description: 'Variant is the product to install - one of Calico
+                      or TigeraSecureEnterprise Default: Calico'
+                    enum:
+                    - Calico
+                    - TigeraSecureEnterprise
+                    type: string
+                type: object
+              mtu:
+                description: MTU is the most recently observed value for pod network
+                  MTU. This may be an explicitly configured value, or based on Calico's
+                  native auto-detetion.
+                format: int32
+                type: integer
               variant:
                 description: Variant is the most recently observed installed variant
                   - one of Calico or TigeraSecureEnterprise
@@ -3856,6 +4238,20 @@ rules:
       - delete
       - watch
   - apiGroups:
+    - crd.projectcalico.org
+    resources:
+    - felixconfigurations
+    verbs:
+    - patch
+  - apiGroups:
+    - crd.projectcalico.org
+    resources:
+    - ippools
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
       - scheduling.k8s.io
     resources:
       - priorityclasses
@@ -3959,10 +4355,14 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: tigera-operator
-          image: quay.io/tigera/operator:v1.10.7
+          image: quay.io/tigera/operator:v1.13.0
           imagePullPolicy: IfNotPresent
           command:
             - operator
+          volumeMounts:
+            - name: var-lib-calico
+              readOnly: true
+              mountPath: /var/lib/calico
           env:
             - name: WATCH_NAMESPACE
               value: ""
@@ -3973,11 +4373,15 @@ spec:
             - name: OPERATOR_NAME
               value: "tigera-operator"
             - name: TIGERA_OPERATOR_INIT_IMAGE_VERSION
-              value: v1.10.7
+              value: v1.13.0
           envFrom:
             - configMapRef:
                 name: kubernetes-services-endpoint
                 optional: true
+      volumes:
+        - name: var-lib-calico
+          hostPath:
+            path: /var/lib/calico
 
 ---
 # Source: tigera-operator/templates/certs/certs-node.yaml

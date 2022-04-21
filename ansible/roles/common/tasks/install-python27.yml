@@ -21,4 +21,4 @@
     - packages
     - install-python27
     - install-common
-   when: python_27_install
+   when: python_27_install.changed == true

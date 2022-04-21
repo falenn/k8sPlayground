@@ -11,3 +11,4 @@ facts
 id_rsa*
 
 inventory.txt
+inventory.ini

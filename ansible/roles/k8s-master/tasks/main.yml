@@ -26,10 +26,13 @@
     mode: 0700
   tags: k8s_master_install
 
+- name: Render kubeadm-config.yml
+  template:
+    src: kubeadm-config.yml.j2
+    dest: /tmp/kubeadm-config.yml
+
 - name: kubeadm init
-  command: "/usr/bin/kubeadm init \
-   --ignore-preflight-errors={{ preflight_errors | quote }} \
-   --pod-network-cidr={{ k8s_kubelet_service_cidr }}"
+  command: "/usr/bin/kubeadm init --config /tmp/kubeadm-config.yml"
   register: kubeadm_init_result
 - debug: var=kubeadm_init_result
   tags: k8s_master_install
@@ -73,6 +76,6 @@
   tags: k8s_master_install
 
 
-#- pause:
+
 #    minutes: 1
 #    prompt: "Make sure network pods are started"

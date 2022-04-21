@@ -2,4 +2,6 @@
 # roles/k8s/tasks/main.yml
  - name: Install k8s binaries
    import_tasks: install.yml
+ - name: Setup iptables bridge
+   import_tasks: iptables_bridge.yml
 

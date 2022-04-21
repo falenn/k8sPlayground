@@ -1,5 +1,7 @@
 # kubeadm
 # k8s master node - master1 pulled from inventory
-k8s_kubelet_service_cidr: "10.244.0.0/16"
+k8s_cluster_version: v1.22.0
+k8s_cluster_network_cidr: "10.244.0.0/16"
+k8s_kubelet_cgroup_driver: "cgroupfs"  # should use docker value - but this is moving to containerd
 preflight_errors: 'all'
 

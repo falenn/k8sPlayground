@@ -3,14 +3,13 @@
 # General
 tmp_dir: ./tmp
 remote_tmp_dir: /tmp
-ansible_remote_user: ansible
 
 kubeadm_reset_before_init: yes
 
 k8s_system_user: root
 k8s_system_group: root
 #k8s_master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4']['address'] }}"
-k8s_master_ip: 192.168.2.41
+k8s_master_ip: 192.168.2.180
 k8s_master_port: 6443
 
 

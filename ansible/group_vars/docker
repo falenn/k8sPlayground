@@ -1,8 +1,11 @@
 docker_version: docker-ce-19.*
-docker_insecure_registries: "192.168.2.6:30000"
+docker_insecure_registries: "192.168.2.180:30000"
 docker_data_root: "/data/docker"
 # storage drive used to be devicemapper.  overlay2 requires kernel 4 and xfs
-docker_storage_driver: "devicemapper"
+# uname -r 
+# check kernel ver for > 3.10.0-514 for overlay2 support
+# verify xfs_info <mount>    ftype=1 to support overlay2
+docker_storage_driver: "overlay2"
 docker_exec_opts: "native.cgroupdriver=cgroupfs"
 docker_daemon_json_path: "/etc/docker"
 docker_user: root

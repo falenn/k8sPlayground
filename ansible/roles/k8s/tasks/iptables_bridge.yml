@@ -1,0 +1,19 @@
+---
+- name: configure iptables_bridge
+  become: true
+  copy:
+    src: files/k8s-bridge.conf
+    dest: /etc/sysctl.d
+    owner: root
+    group: root
+    mode: 664
+  register: k8s_bridge_conf
+  tags: k8s_install, iptables_bridge
+
+
+
+- name: Reload Sysctl
+  become: true
+  command: "sysctl --system"
+  when: k8s_bridge_conf
+  tags: k8s_install, iptables_bridge

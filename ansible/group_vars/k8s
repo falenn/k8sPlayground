@@ -1,4 +1,4 @@
-k8s_version: 1.22*
+k8s_version: 1.21*
 k8s_cni_version: 0.*.*
 
 # environment

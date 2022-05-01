@@ -22,7 +22,7 @@ spec:
     name: busybox
   restartPolicy: Always
   nodeSelector:
-    name: node1
+    name: compute1
 ---
 apiVersion: v1
 kind: Pod
@@ -40,4 +40,4 @@ spec:
     name: busybox
   restartPolicy: Always
   nodeSelector:
-    name: node2
+    name: compute2

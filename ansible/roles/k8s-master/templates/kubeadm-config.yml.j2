@@ -1,6 +1,6 @@
 # kubeadm-config.yml
 kind: ClusterConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta1
 kubernetesVersion: {{ k8s_cluster_version }}
 networking:
   podSubnet: {{ k8s_cluster_network_cidr }} #pod-network-cidr
@@ -8,3 +8,8 @@ networking:
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 cgroupDriver: {{ k8s_kubelet_cgroup_driver }}
+#FeatureGates:
+#  DevicePlugins: true
+#  CSINodeInfo: true 
+#  CSIDriverRegistry: true
+#  ExpandCSIVolumes: true

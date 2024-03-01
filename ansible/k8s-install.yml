@@ -12,10 +12,8 @@
   become: yes
   roles:
     - k8s-master
-    - flannel
+    - calico
   
-
-
 - name: Install K8s Nodes
   hosts: node
   become: yes

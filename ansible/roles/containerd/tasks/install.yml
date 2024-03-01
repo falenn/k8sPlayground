@@ -1,0 +1,28 @@
+---
+# https://swapnasagarpradhan.medium.com/install-a-kubernetes-cluster-on-rhel8-with-conatinerd-b48b9257877a
+# Announce Install of Containerd
+- name: Announce Install of Containerd
+  debug:
+    msg: "Installing Containerd"
+
+# Add Containerd repo
+- name: Add Containerd repository
+  shell:
+    cmd: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+
+- name: Install ContainerD
+  dnf:
+    name:
+    - containerd.io
+    state: latest
+  vars:
+    register: containerd_dnf_install
+    tags: [ containerd-install, dnf-install ]
+
+# turn off swap
+- name: turn off swap
+  command: "/usr/sbin/swapoff -a"
+  tags:
+  - containerd-install
+

@@ -1,0 +1,9 @@
+---
+# roles/containerd/tasks/main.yml
+- name: Install Containerd
+  import_tasks: install.yml
+  when: "'install' in ansible_tags or 'all' in ansible_tags or (ansible_tags is undefined) or ansible_tags|default([])|length == 0"
+
+- name: Uninstall Containerd
+  import_tasks: uninstall.yml
+  when: "(ansible_tags is not undefined) and ('uninstall' in ansible_tags)"

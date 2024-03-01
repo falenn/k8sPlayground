@@ -1,0 +1,10 @@
+---
+- hosts: containerd
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: Include Containerd
+      include_role:
+        name: containerd
+      tags:
+        - install

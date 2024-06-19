@@ -1,6 +1,18 @@
-k8s_version: 1.21*
+# k8s version
+k8s_version: "v1.30"
+# desired CNI - not used
+k8s_cni: calico
 k8s_cni_version: 0.*.*
-
+# desired container runtime - not used 
+container_runtime: containerd
+# pod network cidr - not used
+pod_network_cidr: "172.18.0.0/16"
+# firewalld config - not used
+configure_firewalld: false
+# proxy - not used
+setup_proxy: false
+proxy_server: "proxy.example.com:8080"
+docker_proxy_exclude: "localhost,127.0.0.1"
 # environment
 k8s_cni_state_dir: /var/lib/cni
 k8s_kubelet_config_dir: /var/lib/kubelet

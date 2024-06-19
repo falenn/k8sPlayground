@@ -1,4 +1,9 @@
 ---
+# extra-vars are used to propagate vars down to tasks.
+#
+# to run remove:
+# ansible-playbook containerd.yml --extra-vars ansible_tags=remove
+
 - hosts: containerd
   become: yes
   gather_facts: false
@@ -6,5 +11,3 @@
     - name: Include Containerd
       include_role:
         name: containerd
-      tags:
-        - install

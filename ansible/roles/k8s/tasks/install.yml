@@ -1,30 +1,26 @@
 # K8s
 ---
 - name: Add k8s yum repository
-  yum_repository:
-    name: kubernetes
-    description: Kubernetes YUM Repo
-    file: kubernetes
-    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-    enabled: yes
-    gpgcheck: yes
-    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-  tags:
-   - k8s-install
+  template:
+    src: kubernetes.repo.j2
+    dest: /etc/yum.repos.d/kubernetes.repo
+  tags: [ k8s-install, install k8s-repo ]  
 
+
+# Install k8s binaries
 - name: Install k8s
-  yum:
+  dnf:
     name: "{{ packages }}"
     state: installed
   vars:
+    disable_excludes: "kubernetes"
     packages:
-     - "kubelet-{{ k8s_version }}"
-     - "kubeadm-{{ k8s_version }}"
-     - "kubectl-{{ k8s_version }}"
-     - "kubernetes-cni-{{ k8s_cni_version }}"
+     - "kubelet"
+     - "kubeadm"
+     - "kubectl"
   register: k8s_yum_install
-  tags:
-   - k8s-install
-  # notify: start_kubelet_handler
+  tags: [ k8s-install install k8s-repo ]
+
+# notify: start_kubelet_handler
 - debug: var=k8s_yum_install
   

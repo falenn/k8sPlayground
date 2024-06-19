@@ -1,0 +1,60 @@
+---
+# Install crictl
+# only download once, move to remote
+
+# mkdir tmp_dir
+- name: create containerd tmp dir
+  file:
+    path: "{{ containerd_tmp_dir }}"
+    state: directory
+  tags: [ crictl-install, containerd-install, install ]
+
+# see if download already exists
+- name: check if download exists
+  stat:
+    path: "{{ containerd_tmp_dir }}/{{ crictl_download_file }}"
+  register: crictl_download_result
+  tags: [ crictl-install, containerd-install, install ]
+
+# wget crictl
+- name: Download crictl
+  get_url:
+    url: "{{ crictl_download_uri }}"
+    dest: "{{ containerd_tmp_dir }}/{{ crictl_download_file }}"
+    mode: '0440'
+  delegate_to: localhost
+  run_once: true
+  tags: [ crictl-install, containerd-install, install ]
+
+# move downloaded files to remotes
+- name: Move to remote
+  copy:
+    src: "{{ containerd_tmp_dir }}/{{ crictl_download_file }}"
+    dest: "{{ containerd_tmp_dir }}/{{ crictl_download_file }}"
+  tags: [ crictl-install, containerd-install, install ]
+
+# install crictl
+- name: Install crictl
+  unarchive: 
+    src: "{{ containerd_tmp_dir }}/{{ crictl_download_file }}"
+    dest: /usr/local/bin
+    remote_src: yes
+  tags: [ crictl-install, containerd-install, install ]
+
+# set permissions
+- name: Set execute
+  file:
+    path: /usr/local/bin/crictl
+    owner: root
+    group: root
+    mode: '0775'
+  tags: [ crictl-install, containerd-install, install ]
+
+# configure
+- name: copy crictl config
+  template:
+    src: crictl.yaml.j2
+    dest: /etc/crictl.yaml
+    owner: root
+    group: root
+    mode: '0644'

@@ -4,3 +4,7 @@ containerd_packages:
 - device-mapper-persistent-data 
 - lvm2
 containerd_version: 1.7.11
+os_version: "8.8 (Green Obsidian)"
+crictl_download_uri: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.26.0/crictl-v1.26.0-linux-amd64.tar.gz"
+crictl_download_file: "crictl.tgz"
+containerd_tmp_dir: /tmp/k8s_install/containerd

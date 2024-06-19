@@ -4,13 +4,36 @@
 - name: Announce Install of Containerd
   debug:
     msg: "Installing Containerd"
+  tags: [ containerd-install, install ]
 
 # Add Containerd repo
 - name: Add Containerd repository
   shell:
     cmd: dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  tags: [ containerd-install, install, add-repo ]
 
+# Add stable.repo
+- name: Add stable.repo
+  shell:
+    cmd: dnf config-manager --add-repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/CentOS_8/devel:kubic:libcontainers:stable.repo
+  tags: [ containerd-install, install, add-repo ]
 
+# Add repos - cri-o
+#- name: Add cri-o repo
+#  shell:
+#    cmd: dnf config-manager --add-repo https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:${{ os_version }}/CentOS_8/devel:kubic:libcontainers:stable:cri-o:${{ os_version }}.repo
+
+  #    https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/${{ os_version }}
+    #  tags: [ containerd-install, install, add-repo ]
+
+# update dnf cache
+- name: update dnf cache
+  shell:
+    cmd: dnf makecache
+  tags: [ install ]
+
+  
+# Install ContainerD
 - name: Install ContainerD
   dnf:
     name:
@@ -18,11 +41,59 @@
     state: latest
   vars:
     register: containerd_dnf_install
-    tags: [ containerd-install, dnf-install ]
+    tags: [ containerd-install, dnf-install, install ]
 
 # turn off swap
 - name: turn off swap
   command: "/usr/sbin/swapoff -a"
-  tags:
-  - containerd-install
+  tags: [ containerd-install, install ]
+
+# create required directories
+- name: create dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+  - /etc/containerd
+
+# Install modules config
+- name: Install module config
+  template: 
+    src: modules-k8s.conf.j2
+    dest: /etc/modules-load.d/k8s.conf
+  tags: [containerd-install, install ]
+
+# Install system kernel modules
+- name: Install system kernel modules
+  shell: modprobe overlay; modprobe br_netfilter
+  run_once: true
+  tags: [ containerd-install, install, kernelmod ]
+
+# Enable net.bridge
+- name: Enable net.bridge
+  template:
+    src: sysctl-k8s.conf.j2
+    dest: /etc/sysctl.d/k8s.conf
+  tags: [ containerd-install, install, kernelmod ]
+
+# Apply sysctl params without rebooting
+- name: Apply net.bridge
+  shell: sysctl --system
+  tags: [ containerd-isntall, install, kernelmod ] 
+
+# Set containerd config
+- name: Set containerd config
+  template:
+    src: config.toml.j2
+    dest: /etc/containerd/config.toml
+  tags: [ containerd-install, install ]
+
+# Start
+- name: Start containerd
+  systemd:
+    name: containerd
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  tags: [ containerd-install, install ]
 

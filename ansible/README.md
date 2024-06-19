@@ -9,6 +9,16 @@ ansible-inventory -i inventory.txt --host <hostname or IP>
   or
 ansible -u root -i inventory.txt -m setup <hostname or IP>
 
+# Executing ansible via docker
+## Enter Ansible Docker image
+%ansible
+
+## Run Ansible Playbooks
+%ansible-playbook containerd.yml
+
+## Run Playbook with uninstall environment vars
+%ansible-playbook containerd.yml --extra-vars ansible_tags=remove 
+
 # Help / References
 Help from https://github.com/magic7s/ansible-kubeadm-contiv
 

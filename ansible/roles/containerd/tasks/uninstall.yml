@@ -1,15 +1,16 @@
 # containerd/tasks/uninstall
-- name: Announce Containerd Uninstall
+- name: Announce Containerd Remove
   debug:
-    msg: "Uninstalling Containerd"
+    msg: "Remove Containerd"
+  tags: [ remove ]
 
-- name: Uninstall Containerd
+- name: Remove Containerd
   dnf:
     name:
     - containerd.io
-    state: uninstalled
+    state: removed
   vars:
-    register: containerd_dnf_uninstall
-    tags: [ containerd-uninstall, dnf-uninstall ]
+    register: containerd_dnf_remove
+    tags: [ remove, containerd-remove, dnf-remove ]
 
 

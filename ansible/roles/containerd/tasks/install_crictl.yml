@@ -7,6 +7,7 @@
   file:
     path: "{{ containerd_tmp_dir }}"
     state: directory
+  delegate_to: localhost
   tags: [ crictl-install, containerd-install, install ]
 
 # see if download already exists
@@ -24,6 +25,13 @@
     mode: '0440'
   delegate_to: localhost
   run_once: true
+  tags: [ crictl-install, containerd-install, install ]
+
+# make remote dir
+- name: make remote dir
+  file:
+    path: "{{ containerd_tmp_dir }}"
+    state: directory
   tags: [ crictl-install, containerd-install, install ]
 
 # move downloaded files to remotes

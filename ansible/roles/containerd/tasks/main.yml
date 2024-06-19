@@ -6,14 +6,18 @@
   tags: always
  
 - name: Install Containerd
-  import_tasks: install.yml
-  when: "'install' in ansible_tags or 'all' in ansible_tags or (ansible_tags is undefined) or ansible_tags|default([])|length == 0"
+  import_tasks: install_containerd.yml
+  when: "'install_containerd' in ansible_tags or 'all' in ansible_tags or (ansible_tags is undefined) or ansible_tags|default([])|length == 0"
 
 - name: Install crictl
   import_tasks: install_crictl.yml
-  when: "'install' in ansible_tags or 'all' in ansible_tags or (ansible_tags is undefined) or ansible_tags|default([])|length == 0"
+  when: "'install_crictl' in ansible_tags or 'all' in ansible_tags or (ansible_tags is undefined) or ansible_tags|default([])|length == 0"
 
 
 - name: Uninstall Containerd
-  import_tasks: uninstall.yml
-  when: "(ansible_tags is defined) and ('remove' in ansible_tags)"
+  import_tasks: uninstall_containerd.yml
+  when: "(ansible_tags is defined) and ('uninstall_containerd' in ansible_tags or 'remove' in ansible_tags)"
+
+- name: Uninstall crictl
+  import_tasks: uninstall_crictl.yml
+  when: "(ansible_tags is defined) and ('uninstall_crictl' in ansible_tags or 'remove' in ansible_tags)"

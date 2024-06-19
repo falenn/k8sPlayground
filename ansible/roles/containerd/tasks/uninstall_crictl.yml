@@ -1,0 +1,16 @@
+---
+# remove installed binary
+- name: remove crictl binary
+  file:
+    path: /usr/local/bin/crictl
+    state: absent
+  tags: [ crictl-uninstall, containerd-uninstall, uninstall ]
+
+# remove the config file
+- name: remove crictl config file
+  file:
+    path: /etc/crictl.yaml
+    state: absent
+  tags: [ crictl-uninstall, containerd-uninstall, uninstall ]
+
+

@@ -1,4 +1,5 @@
 Follow instructions here: https://docs.rke2.io/install/methods
+This is for a simple RKE2 install on Rocky 9 / Rel 9
 
 1. Install some tools
 ```
@@ -61,8 +62,26 @@ Install kubectl
 sudo dnf install -y kubectl
 ```
 
-6. After installing on other nodes, join them using the join token, found at `/var/lib/rancher/rke2/server/node-token`.
+This binary is also already installed, just not on the path.  Kubectl, crictl, etc. are located here: `/var/lib/rancher/rke2/bin`.  If we put them on the path, they are available:
+```
+export PATH=$PATH:/var/lib/raancher/rke2/bin
+```
 
+6. Adding Agents (worker nodes)
+Install the rke2 agent
+```
+export INSTALL_RKE2_TYPE="agent"
+curl -sfL https://get.rke2.io | sudo sh -
+systemctl enable rke2-agent.service
+```
+After installing on other nodes, join them using the join token from the server, found at `/var/lib/rancher/rke2/server/node-token`.  Do this by first creating a config file before running the agent for the first time:
+```
+sudo bash
+mkdir -p /etc/rancher/rke2/
+```
+`vi /etc/rancher/rke2/config.yaml`:
+```
+server: https://<server>:9345
 
 
 

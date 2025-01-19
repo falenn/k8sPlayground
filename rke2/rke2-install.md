@@ -1,9 +1,12 @@
+# RKE2 Install
+
 Follow instructions here: https://docs.rke2.io/install/methods
 This is for a simple RKE2 install on Rocky 9 / Rel 9
 
+## Steps
 1. Install some tools
 ```
-sudo dnf install -y tmux curl wget jq
+sudo dnf install -y tmux curl wget jq net-tools
 ```
 
 2. Create rke2-calico.conf file for NetworkManager to avoid trying to configure interfaces created by CNI:
